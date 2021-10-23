@@ -1,0 +1,436 @@
+Theme Article: Agile and Open-Source Hardware
+
+Chipyard: Integrated Design, Simulation, and Implementation Framework for Custom SoCs
+Alon Amid, David Biancolin, Abraham Gonzalez, Daniel Grubb, Sagar Karandikar, Harrison Liew, Albert Magyar, Howard Mao, Albert Ou, Nathan Pemberton, Paul Rigge, Colin Schmidt, John Wright, Jerry Zhao, Yakun Sophia Shao, Krste Asanovic, and Borivoje Nikolic University of California, Berkeley
+Abstract—Continued improvement in computing efﬁciency requires functional specialization of hardware designs. Agile hardware design methodologies have been proposed to alleviate the increased design costs of custom silicon architectures, but their practice thus far has been accompanied with challenges in integration and validation of complex systems-on-a-chip (SoCs). We present the Chipyard framework, an integrated SoC design, simulation, and implementation environment for specialized compute systems. Chipyard includes conﬁgurable, composable, open-source, generator-based IP blocks that can be used across multiple stages of the hardware development ﬂow while maintaining design intent and integration consistency. Through cloud-hosted FPGA accelerated simulation and rapid ASIC implementation, Chipyard enables continuous validation of physically realizable customized systems.
+
+Digital Object Identiﬁer 10.1109/MM.2020.2996616 Date of publication 22 May 2020; date of current version 30 June 2020.
+
+& IN THE FACE of the slowdown in technology scaling, sustaining improvements in system capability requires a greater use of domain-speciﬁc
+
+10
+
+0272-1732 ß 2020 IEEE
+
+Published by the IEEE Computer Society
+
+IEEE Micro
+
+architectures. This era of specialization is being past eight years. These designs have been
+
+seen as a new golden age of computer architec- based on the open-source Rocket Chip SoC ture,1 but creates the challenge of escalating generator3 that includes Rocket, an in-order
+
+development costs. Differentiated architec- RISC-V core, and supports coherent caches
+
+tures require productive digital system design and standard interconnects via the TileLink
+
+methods for architectural exploration, system protocol. Customizations to test chips based
+
+integration, veriﬁcation, validation, and physi- on the Rocket Chip generator have been per-
+
+cal design.
+
+formed by adding multiple generations of vec-
+
+To reduce development costs, a generator- tor processors, peripheral devices, and by
+
+based agile design process for hardware has replacing the standard in-order core with an
+
+been proposed and demonstrated through a
+series of RISC-V microprocessor chips developed with small teams2 and made available as a now widely used open-source codebase.3 Designs cap-
+
+out-of-order core. The design process outlined in2 was gradually enhanced on the physical design front to support much larger silicon dies and many more placeable instances in
+
+tured as generators enable reuse through rich the SoC, resulting in increasingly complex test
+
+parameterization and incremental extension. chips (see Figure 1). The most recent test
+
+Past efforts have focused on the module genera- chips in this series are representative of mod-
+
+tor development and an implementation of ern SoCs composed of a diverse set of IP
+
+relatively small, homogeneous processor archi- blocks and include multiple cores, accelera-
+
+tectures with uniform interconnect and core- tors, and complete analog subsystems, includ-
+
+level conﬁgurability. Enabling the
+
+ing high-speed serial links
+
+development of complex heterogeneous systems-on-a-chip (SoCs) requires greater levels of coordination and synchronization between many disparate open-source designs and development tools, motivating the creation of a new uniﬁed open-source SoC design framework, which we call Chipyard.Ã
+
+Chipyard provides a framework to bring
+together a collection of independently
+developed open-source tools and RTL
+generators, allowing development of
+heterogeneous SoCs through integrated
+
+(SerDes), analog-to-digital converters (ADCs), and phasedlocked loops (PLLs).
+Veriﬁcation and validation are major components of the SoC design cycle. By relying on many previously veriﬁed opensource components such as the Rocket core, and incrementally extending SoCs based on the
+
+Chipyard provides a framework
+
+design, simulation, and Rocket Chip generator, it was
+
+to bring together a collection of independently developed open-
+
+implementation environments.
+
+often possible to sidestep rigorous veriﬁcation and validation
+
+source tools and RTL generators,
+
+steps in this series of test chips.
+
+allowing development of heterogeneous SoCs Each test chip has a focus on testing either
+
+through integrated design, simulation, and imple- a particular design feature of a module or a
+
+mentation environments. Chipyard helps alleviate component of the design methodology, and
+
+many of the challenges that exist when using inde- therefore, the veriﬁcation of a test chip
+
+pendent and uncoordinated open-source tools was, respectively, limited to a small set of
+
+and designs, as often experienced in concurrent functionality.
+
+and nonuniform feature design iterations, typical
+
+This reliance on open-source generators
+
+in the agile design process.
+
+shifts the veriﬁcation challenge from block-level
+
+testing to system-integration veriﬁcation and
+
+AGILE SoC DEVELOPMENT
+
+validation. Rich module-level conﬁgurability in
+
+A number of RISC-V test chips have been the generator-based approach allows for quick,
+
+designed by small groups of students at the iterative design customization, enabled by
+
+University of California, Berkeley over the expansive conﬁguration and parameter sys-
+
+tems. While these parameter systems enable
+
+Ãhttps://github.com/ucb-bar/chipyard/
+
+quick iterations across many design points,
+
+July/August 2020
+
+11
+
+Agile and Open-Source Hardware
+
+Figure 1. Increasing complexity of custom RISC-V SoC test chips built at Berkeley using the Rocket Chip SoC generator since 2012.
+
+their ﬂexible nature makes them prone to misconﬁguration, underscoring the need for continuous full-system integrated validation and veriﬁcation. Rich module-level parameterization makes it possible to continuously update the SoC design in an agile way, but does not inherently aid the design veriﬁcation or presilicon validation of the chip performance. In addition, issues relating to on- and off-chip interfaces, clock domain crossings, third-party IP integration, and power management are all vulnerable to insufﬁcient full-system veriﬁcation coverage. Our previous chips have encountered both veriﬁcation and validation gaps of this type: one chip’s cache capacity was inadvertently reduced to half of its desired size, when the conﬁguration was changed late in the design process to meet physical design constraints.
+Although design and veriﬁcation executed by a small team in an agile manner has a high appeal for small companies and industrial and academic research labs, our experiences with test chips developed through an agile process also identify some challenges in execution. The increasing complexity of test chips makes it difﬁcult to parallelize and distribute effort among the small number of designers, as architecture deﬁnition, RTL implementation, physical design, veriﬁcation, and validation all take varying amounts of time, which is difﬁcult to account for. Furthermore, it is difﬁcult to
+
+maintain institutional memory of good design practices, especially in academic environments and when working with complex physical design tool ﬂows in deeply scaled technologies.
+Finally, transitioning between process technologies is a signiﬁcant undertaking in both system and test chip design. The test chips in this retrospective have been designed in several different process technologies, including IBM 45nm SOI, ST 28nm FD-SOI, TSMC 28nm, TSMC 16nm FFC, and Intel 22nm FFL. The generator-based approach simpliﬁes process technology transition since it allows for adjustment of design parameters through high-level descriptions. However, this ﬂexibility does not propagate across the abstraction layers to the physical design process. Each custom test chip requires signiﬁcant manual effort in mapping RTL abstractions to processspeciﬁc components (such as memory and register-ﬁle macros), as well as meeting the design rules. When generator parameters change between design iterations, a new rigid physical design script is often created.
+While some of the issues described in this section are not speciﬁc to agile hardware design methodologies, their visibility increases as the cost and complexity of other parts of the ﬂow diminish. Nevertheless, a common theme throughout our observations relates to integration and partitioning—on the chip level, and on the methodology and ﬂow level.
+
+12
+
+IEEE Micro
+
+CHIPYARD FRAMEWORK
+Chipyard provides a uniﬁed framework and work ﬂow for agile SoC development. Multiple separately developed and highly parameterized IP blocks can be conﬁgured and interconnected to form a complete SoC design. The SoC design can be veriﬁed and validated through both FPGA-accelerated and standard software simulations, then pushed through portable VLSI design ﬂows to obtain tapeout-ready GDSII data for various target technologies. Chipyard also provides a workload management system to generate software workloads to exercise the design.
+Chipyard Front-End RTL Generators The front end of the Chipyard framework is
+based on the Rocket Chip SoC generator.2,3 Chipyard inherits Rocket Chip’s Chisel-based parameterized hardware generator methodology,3 including a Scala-based parameter-negotiation framework, Diplomacy,4 that negotiates mutually compatible parameterizations and interconnections across all IP blocks in a design. A uniﬁed top-level SoC generator enables the generation of heterogeneous systems based on parameterized conﬁgurations. Chipyard also allows IP blocks written in other hardware languages, e.g., Verilog, to be included via a Chisel wrapper.
+Chipyard adds a large corpus of open-source IP generators to the existing Rocket Chip base library, allowing for the construction of modern digital SoCs. These include the Berkeley Out-ofOrder Machine (BOOM) generator,5 the Ariane core,6 the Hwacha vector-unit generator,7 digital signal processing modules, domain-speciﬁc accelerators (including machine learning and cryptography), memory systems, and peripherals. The majority of these generators have silicon-proven instances through the aforementioned series of test chips.
+While some commercial IP vendors have large collections of proprietary conﬁgurable IP for certain portions of an SoC, Chipyard provides a publicly extensible open-source alternative for complete SoCs to support continuing research and development of specialized state-of-the-art SoCs.
+Other open-source SoC design frameworks focus on tile-granularity customization in many-
+
+core architectures,8,9 or rely on rigid subsystems and proprietary IP.10 The generator approach used in Chipyard does not rely solely on static interfaces for integration of IP blocks, but allows for dynamic customization of encodings, memory maps, and buses during the hardware generation stage, enabling custom components to be created and integrated at various levels, including in the memory mapped IO (MMIO) periphery, as tightly integrated accelerators, and as heterogeneous cores and controllers. For example, through its ﬁne-grained intracore parameter system, the Rocket core can be used for different purposes in an SoC. Speciﬁcally, in several of our recent test chips, the application cores consist of fully Linux-capable Rocket cores supporting RV64GC with ﬂoating-point units and virtual memory support, whereas the controller cores (e.g., a power-management unit) are a Rocket core supporting only RV64IMAC, with signiﬁcantly smaller branch prediction and cache resources and no virtual memory. In essence, a signiﬁcant portion of the microcontrollers running ﬁrmware on the SoC can be implemented using variants of Rocket or BOOM cores. This common core conﬁguration interface for all software-managed controllers within the system improves designer productivity, compared to alternative SoC development frameworks that enable drop-in replacement core options or only coarse-grained sizing. Similarly, machine-learning accelerators have been integrated with Rocket and other core generators as tightly integrated accelerators,11 as well as in the form of MMIO periphery accelerators,12 demonstrating the various levels of possible customization in the Chipyard framework. Figure 2 demonstrates the various degrees of customization on the core, tile, and SoC levels, enabled by the Chipyard framework.
+FIRRTL Intermediate Representation The Chipyard framework currently integrates
+tools to address the three main activities within the custom SoC design cycle: front-end RTL design, system validation/veriﬁcation, and backend chip physical design. These different stages of the SoC design ﬂow require different levels of description of the design. For example, while front-end RTL descriptions usually use abstract notions of memory and I/O, back-end RTL
+
+July/August 2020
+
+13
+
+Agile and Open-Source Hardware
+
+Figure 2. SoC customization in Chipyard using the Rocket Chip generator conﬁguration system. (a) A typical Chipyard SoC can include multiple heterogeneous application cores, as well as multiple conﬁgurations of BOOM or Rocket cores that can serve various purposes within the SoC, such as a controller unit. Customization can be performed across various levels of the SoC, including Rocket Custom Coprocessor (RoCC) accelerators, MMIO accelerators, and peripherals. (b) An example conﬁguration of a simple design, consisting of a single Rocket in-order processor core and a custom educational SHA3 tightly integrated accelerator. (c) An example conﬁguration of a more complex SoC, consisting of a multiple cores of various capabilities (RV32 Rocket in-order control core, RV64 Rocket in-order application core, RV64GC BOOM 3-wide out-of-order application core), custom accelerators attached to each core, a standard set of peripherals, and a deeper memory hierarchy with an L2 cache. This example also includes a simulated block device and simulated backing DRAM memory.
+
+requires more precise descriptions mapped to the underlying process technology. Similarly, FPGA emulation will require the digital design to interact with FPGA-speciﬁc interfaces, periphery, and internal components, which requires particular collateral. Cosimulation also requires additional hardware clock gating to control simulation progress.
+Chipyard elaborates the front-end RTL design into a FIRRTL13 intermediate representation. Custom FIRRTL transformations convert the generated FIRRTL design to drive the different ﬂows used at different stages of the design
+
+cycle. Using FIRRTL transformations to enable multiple concurrent design ﬂows from the same shared code repository and source RTL helps to reduce and amortize the environment setup costs incurred with frequent iterations between development stages, as is needed for an agile methodology. This approach is demonstrated in Figure 3.
+While Chisel is the primary language for design entry in Chipyard using the FIRRTL compiler, a FIRRTL-based ﬂow can integrate Verilog IP through either “Blackbox” IP integration or Verilog-to-FIRRTL support by certain
+
+14
+
+IEEE Micro
+
+Verilog elaboration tools.14 Furthermore, while the Verilog outputs of various stages of a FIRRTL-based ﬂow can be integrated into standard dynamic veriﬁcation environments or compared using logical equivalence checking, tools for both simulation and temporal property checking of “FIRRTL-native” circuits are openly available.15
+Verilog or SystemVerilog-based design frameworks8,10 must rely on design-speciﬁc custom scripts or interface adjustments when transitioning between emulation, simulation and physical design. In contrast to alternative hardware package management systems16 or integration standards like IP-XACT, which focus on metadata associated with particular IP components to target different electronic design automation (EDA) ﬂows, the FIRRTL transformations used by Chipyard can be applied to any Chisel design integrated with the Chipyard framework.
+Software RTL Simulation Software-based RTL simulators are a critical
+tool in most phases of the design process. Compiling a software simulator of a top-level design, including various IP components, peripheral and memory models, and an external test harness can be a time-consuming engineering task. Chipyard provides build ﬂows for both the open-source Verilator simulator and proprietary commercial simulators. Open-source RTL simulators such as Verilator are also used in industry17 to provide efﬁcient and cost-effective digital design veriﬁcation. Chipyard provides Makeﬁle wrappers for direct generation of a simulation executable, which simulates tethered designs with emulated peripherals. The Makeﬁle wrappers generate the top-level design and matching test harnesses based on the SoC conﬁguration. Tethered designs use a host to send transactions that bring up the simulated SoC and load programs. These software RTL simulation wrappers enable quick design cycles and execution of RISC-V binaries in simulation. While tethered designs are the default form to generate software RTL simulations in Chipyard, Chipyard also supports un-tethered SoC conﬁgurations in which the SoC can boot standalone using a boot ROM.
+
+Figure 3. Multiple disparate design ﬂows supported by the Chipyard framework through generators and transformations. A series of FIRRTL transformations consumes generators with a custom conﬁguration, and outputs appropriate Verilog and associated collateral for different design stage platforms.
+FPGA-Accelerated Simulation With FireSim For full-system validation and evaluation, the
+Chipyard framework harnesses the FireSim18 open-source FPGA-accelerated simulation platform using the AWS EC2 public cloud. In contrast with FPGA prototyping, FPGA-accelerated simulation correctly models timing behavior of not only the design under test, but also the I/Os and peripherals of the SoC. FPGA-accelerated simulation enables deterministic and reproducible evaluation with a realistic system environment, as opposed to FPGA prototyping where each execution is sensitive to the FPGA environment and timing depends on FPGA peripheral device performance (e.g., DRAM performance).
+Originally developed as a platform to enable scale-out simulation for datacenter architecture research on hundreds of cloud FPGAs, FireSim necessarily automates the infrastructure management and simulation mapping necessary to automatically run high-performance simulations. As part of the agile chip-design stack, this automation and integration reduces the level of expertise required to harness cloud FPGAs for emulation purposes and thus increases the accessibility of high-performance full-system simulation to a broad spectrum of designers.
+
+July/August 2020
+
+15
+
+Agile and Open-Source Hardware
+
+FireSim has been useful in presilicon veriﬁcation, validation, and software development. From the perspective of small agile teams with limited resources, FireSim provides many of the features available in costly commercial emulation platforms. In contrast with prior FPGA-accelerated simulation tools, the accessibility of FireSim through FPGA instances on the AWS public cloud, together with the automation of host-target interfaces with the FPGA, have made FireSim a popular tool within Berkeley and other academic hardware development users, as well as emerging startup companies.
+FireSim enables codevelopment of software and hardware simultaneously, allowing for quick software adjustment turnarounds based on hardware modiﬁcations. Furthermore, FireSim plays a major role in the performance and functional validation of processors, since it enables the identiﬁcation of bugs deep into simulation execution time thanks to FPGA acceleration with appropriate peripheral modeling. Unlike many other open-source hardware development platforms with FPGA support, FireSim’s focus on simulation and emulation as opposed to prototyping enables true presilicon performance evaluation and validation in a full-system context within the Chipyard framework. While maintaining its standalone operation as an architectural research platform, FireSim was transformed into a library that is integrated into the broader Chipyard framework. As such, FireSim can now consume design conﬁgurations composed within the Chipyard framework, and transform them into FPGA-accelerated simulations. Furthermore, the FireSim Golden Gate compiler has been integrated into the Chipyard framework, so it can now consume arbitrary FIRRTL as its input, as well as external Verilog components necessary for broader system integration.
+Back-End Physical Design With Hammer For back-end physical design, Chipyard
+includes a modular VLSI ﬂow named Hammer.19 The Hammer VLSI ﬂow provides an abstraction layer above process-technology- and EDA-tool-speciﬁc concerns, with the goal of increasing reuse and modularity of vendor-speciﬁc components of the physical design ﬂow. To this end, the Hammer VLSI ﬂow utilizes separate vendor-speciﬁc process
+
+technology plug-ins and EDA-tool-speciﬁc plug-ins, which implement abstracted software APIs to generate design ﬂow collateral like Tcl scripts, clock constraints, and power speciﬁcations based on higher level design inputs. For example, Hammer will emit process- and vendor-speciﬁc macro placement, obstruction, and power-strap placement commands from a high-level process- and vendor-agnostic description of the design. This separation of abstraction layers between design, process technology, and EDA tool vendor enables faster adoption of open-source components.
+The Hammer ﬂow aspires to support opensource tools in conjunction with commercial and proprietary tools using common levels of abstraction. As such, while the ﬁrst Hammerbased designs were implemented using proprietary process technologies, a plug-in for the ASAP720 open-source predictive process design kit (PDK) was created in only a few weeks and is now included in the core Hammer repository. With this, small teams and academic users can prototype design ﬂows and experiment with RTL designs using predictive or simple physical design kits while being able to reuse similar Hammer descriptions for chip fabrication using advanced process nodes.
+Hammer was designed to support hierarchical physical design ﬂows. Hierarchical physical design ﬂows are of particular importance in highly complex custom SoCs, composed of multiple specialized blocks with a variety of physical design constraints. Decomposing a design into these smaller hierarchical components not only improves the quality of results emitted by EDA tools, but it also allows the distribution of physical design tasks among multiple hardware developers, which is important for agile design. FIRRTL-based grouping and ﬂattening transformations in Chipyard further assist the hierarchical physical design ﬂow in Hammer by enabling users to specify one logical hierarchy in the source RTL while choosing a different hierarchy for physical boundaries through automated transformations.
+Workload Management With FireMarshal Finally, no hardware development environ-
+ment is complete without relevant software interfaces. In order to support continuous and concurrent full-system validation, Chipyard
+
+16
+
+IEEE Micro
+
+enables shared software development across the feature design stages through the FireMarshal software workload generation tool. Shared software development is especially important in integrated validation of specialized and custom designs. FireMarshal provides a standard and version-controlled format for software workload descriptions and automates the generation of these workloads for various simulation targets. Software developers can begin work as soon as a functional model is available (e.g., in the Spike RISC-V ISA simulator or the QEMU emulator). Those workloads can then be used without any modiﬁcation on RTL simulations and FireSim simulations. In this way, the complex task of software development and porting (particularly for Linux-based workloads) can be reused by anyone on the design team without requiring special expertise. FireMarshal includes several examples and templates for Linux-based workloads, enabling fast ramp-up of software development across the various simulation and emulation targets using preset Linux kernel conﬁgurations and base distribution images with matching drivers. Chipyard provides a versioned set of standard RISC-V software development tools (e.g., GNU toolchain, QEMU, Spike), as well as a set of equivalent nonstandard RISC-V development tools for nonstandard extensions of custom IP blocks. The two software development tool sets can be used interchangeably in the framework. The software development structure in Chipyard is illustrated in Figure 4.
+Concurrent Agile Hardware Development Together, the components of the Chipyard
+framework enable continuously integrated development of custom and specialized SoCs, taking advantages of the accessibility of opensource tooling. The Chipyard framework enables further adoption of agile hardware development methodologies, by lowering the barrier to entry and providing support and integration of development environments for different stages of the design process.
+Chipyard is designed for concurrent development of multiple custom SoC features by multiple members of a small team, with each feature going through iterative design cycles, which include modeling, simulation, system
+
+Figure 4. Shared software development in Chipyard using FireMarshal. Designers can use the standard RISC-V software toolchains, or custom software toolchains. While the core application logic and libraries are consistent with the SoC design, kernel and driver conﬁguration may change based on the target platforms or tethered systems. FireMarshal automates workload generation to enable targeting multiple platforms using a single description.
+integration, FPGA emulation and validation, and physical design. The structure of Chipyard enables independent development of the various IP modules and/or conﬁgured SoC instances, with continuous integration using conﬁgured workloads for system validation and veriﬁcation.
+OPEN-SOURCE SoC DEVELOPMENT
+Chipyard aims to be a fully open-source SoC development framework. However, while open-source tools and projects within the digital-logic abstraction layer of the hardware design stack have been gaining traction and trust in research and industrial communities, design aspects that are closer to underlying technologies such as analog and mixed-signal (AMS) modules and the manufacturing interfaces still need to identify appropriate opensource development and integration models.
+In the analog domain, new generator-based approaches such as the Berkeley Analog Generator (BAG)21 are envisioning a portable and process-technology agnostic generator-based approach to AMS design. However, this approach requires tight integration with digital SoC components. Future integration of analog
+
+July/August 2020
+
+17
+
+Agile and Open-Source Hardware
+
+generators and their simulation environments, and the enabling of complete open-source cus-
+
+such as BAG, into the Chipyard framework will tom SoC development solutions.
+
+help support common interfaces and integration
+
+between analog and digital components through ACKNOWLEDGMENTS
+
+integrated tools and automation of design collat-
+
+This work was supported in part by the
+
+eral such as appropriate generated behavioral Defense Advanced Research Projects Agency
+
+models of analog blocks, as well as matching through the Circuit Realization at Faster Time-
+
+physical design constraints.
+
+scales Program under Grant
+
+In the digital domain, there is a large interdependence of standard commercial EDA tool stacks
+
+In this article, we presented the Chipyard framework that was
+
+HR0011-16-C0052; in part by the Advanced Research Projects Agency-Energy, U.S. Department
+
+with tightly controlled NDA-only
+
+developed to provide
+
+of Energy, under Award DE-
+
+physical design kits due to the
+
+an integrated design,
+
+AR0000849; and in part by ADEPT
+
+complexities of submicron pro-
+
+simulation, and imple-
+
+Lab industrial sponsors and afﬁli-
+
+cess technologies. This issue has been identiﬁed in the past,22 and
+
+mentation environment to support the growing
+
+ates. The authors would like to thank Intel, STMicroelectronics,
+
+open-source hardware projects
+
+complexity and differ-
+
+and TSMC for donating prototypes
+
+choose to address this challenge in various ways: some publish
+
+entiation of custom SoCs.
+
+fabrication. The views and opinions of authors expressed herein do not
+
+“patches” to the common ﬂow
+
+necessarily state or reﬂect those of
+
+scripts provided by EDA vendors,8 or partially the U.S. Government or any agency thereof.
+
+associate hardware design template implemen-
+
+tations with particular process technologies,23
+
+but are largely obscured elsewhere. The approach used in the Hammer VLSI ﬂow within Chip-
+
+& REFERENCES
+
+yard is a “plug-in” model. These plug-ins provide 1. J. L. Hennessy and D. A. Patterson, “A new golden
+
+a mapping between the Hammer vendor-agnos-
+
+age for computer architecture,” Commun. ACM,
+
+tic level of abstraction, to the proprietary ven-
+
+vol. 62, no. 2, pp. 48–60, Jan. 2019.
+
+dor-speciﬁc APIs. Open-source physical design initiatives such as the OpenROAD project24 are
+
+2. Y. Lee et al., “An agile approach to building RISC-V microprocessors,” IEEE Micro, vol. 36, no. 2, pp. 8–20,
+
+making encouraging progress toward addressing
+
+Mar. 2016.
+
+this challenge.
+
+3. K. Asanovic et al., “The Rocket Chip generator,” Elect.
+
+Eng. Comput. Sci. Dept., Univ. California–Berkeley,
+
+CONCLUSION
+
+Berkeley, CA, USA, Tech. Rep. UCB/EECS-2016-17, Apr. 2016.
+
+In this article, we presented the Chipyard 4. H. Cook, W. Terpstra, and Y. Lee, “Diplomatic design
+
+framework that was developed to provide an
+
+patterns: A TileLink case study,” in Proc. 1st Workshop
+
+integrated design, simulation, and implementa-
+
+Comput. Archit. Res. RISC-V, 2017.
+
+tion environment to support the growing com- 5. C. Celio, D. A. Patterson, and K. Asanovic, “The
+
+plexity and differentiation of custom SoCs.
+
+Berkeley out-of-order machine (BOOM): An industry-
+
+Through integration with the Rocket Chip gener-
+
+competitive, synthesizable, parameterized RISC-V
+
+ator ecosystem, Chipyard provides a large num-
+
+processor,” Elect. Eng. Comput. Sci. Dept., Univ.
+
+ber of easily composable and extensible open-
+
+California–Berkeley, Berkeley, CA, USA, Tech. Rep.
+
+source digital IP blocks. The additional integra-
+
+UCB/EECS-2015-167, 2015.
+
+tion of multiple simulation and implementation 6. F. Zaruba and L. Benini, “The cost of application-class
+
+tools enables continuous and simultaneous
+
+processing: Energy and performance analysis of a
+
+development for higher-quality veriﬁcation, vali-
+
+Linux-ready 1.7-GHz 64-bit RISC-V core in 22-nm
+
+dation, and system integration. Future integra-
+
+FDSOI technology,” IEEE Trans. Very Large Scale
+
+tion with analog generator frameworks will open
+
+Integr. (VLSI) Syst., vol. 27, no. 11, pp. 2629–2640,
+
+the door to breaking the digital–analog divide,
+
+Nov. 2019.
+
+18
+
+IEEE Micro
+
+7. Y. Lee, C. Schmidt, A. Ou, A. Waterman, and K. Asanovic, “The Hwacha vector-fetch architecture manual, version 3.8. 1,” Elect. Eng. Comput. Sci. Dept., Univ. California–Berkeley, Berkeley, CA, USA, Tech. Rep. UCB/EECS-2015-262, 2015.
+8. J. Balkind et al., “OpenPiton: An open source manycore research framework,” in Proc. 21st Int. Conf. Archit. Support Program. Lang. Operating Syst., 2016, pp. 217–232.
+9. L. P. Carloni, “Invited—The case for embedded scalable platforms,” in Proc. 53rd Annu. Design Autom. Conf., 2016, pp. 17:1–17:6.
+10. P. Whatmough, M. Donato, G. Ko, S. K. Lee, D. Brooks, and G.-Y. Wei, “CHIPKIT: An agile, reusable open-source framework for rapid test chip development,” IEEE Micro, vol. 44, no. 4, Jul./Aug. 2020. doi: 10.1109/MM.2020.2995809.
+11. H. Genc et al., “Gemmini: An agile systolic array generator enabling systematic evaluations of deeplearning architectures,” 2019, arXiv:1911.09925.
+12. F. Farshchi, Q. Huang, and H. Yun, “Integrating NVIDIA deep learning accelerator (NVDLA) with RISC-V SoC on FireSim,” in Proc. 2nd Workshop Energy Efﬁcient Mach. Learn. Cogn. Comput. Embedded Appl. HPCA, 2019.
+13. A. Izraelevitz et al., “Reusability is FIRRTL ground: Hardware construction languages, compiler frameworks, and transformations,” in Proc. 36th Int. Conf. Comput.-Aided Design, 2017, pp. 209–216.
+14. C. Wolf, “Yosys open synthesis suite—write_ﬁrrtl— Write design to a FIRRTL ﬁle,” 2018. [Online]. Available: http://www.clifford.at/yosys/cmd_ write_ﬁrrtl.html
+15. A. Magyar, D. Biancolin, J. Koenig, S. Seshia, J. Bachrach, and K. Asanovic, “Golden gate: Bridging the resource-efﬁciency gap between ASICs and FPGA prototypes,” in Proc. IEEE/ACM Int. Conf. Comput.Aided Design, 2019, pp. 1–8.
+16. O. Kindgren, “Invited paper: A scalable approach to IP management with FuseSoC,” in Proc. Workshop Open Source Design Autom., 2019.
+17. D. Das Sarma and G. Venkataramanan, “Compute and redundancy solution for Tesla’s full self driving computer,” Hot Chips 31: Stanford Memorial Auditorium, Stanford, CA, USA, Aug. 18–20, 2019. [Online]. Available: https://www.hotchips.org/hc31/ HC31_2.3_Tesla_Hotchips_ppt_Final_0817.pdf
+
+18. S. Karandikar et al., “FireSim: FPGA-accelerated cycle-exact scale-out system simulation in the public cloud,” in Proc. ACM/IEEE 45th Annu. Int. Symp. Comput. Archit., Jun. 2018, pp. 29–42.
+19. E. Wang et al., “A methodology for reusable physical design,” in Proc. 21st Int. Symp. Qual. Electron. Design, Mar. 2020.
+20. L. T. Clark et al., “ASAP7: A 7-nm FinFET predictive process design kit,” Microelectron. J., vol. 53, pp. 105–115, 2016.
+21. E. Chang et al., “BAG2: A process-portable framework for generator-based AMS circuit design,” in Proc. IEEE Custom Integr. Circuits Conf., Apr. 2018, pp. 1–8.
+22. G. Gupta, T. Nowatzki, V. Gangadhar, and K. Sankaralingam, “Kickstarting semiconductor innovation with open source hardware,” Computer, vol. 50, no. 6, pp. 50–59, 2017.
+23. M. B. Taylor, “Basejump STL: Systemverilog needs a standard template library for hardware design,” in Proc. 55th Annu. Design Autom. Conf., 2018, pp. 73:1–73:6.
+24. T. Ajayi et al., “Toward an open-source digital ﬂow: First learnings from the OpenROAD project,” in Proc. 56th Annu. Design Autom. Conf., 2019, pp. 76:1–76:4.
+Alon Amid is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His research interests include parallel and distributed computing, energy-efﬁcient processors and architectures, and hardware–software codesign. Amid received the B.Sc. degree in electrical engineering from Technion— Israel Institute of Technology, and the M.S. degree from the University of California, Berkeley. Contact him at alonamid@berkeley.edu.
+David Biancolin is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. Biancolin received the BASc degree in engineering science from the University of Toronto. Contact him at biancolin@berkeley.edu.
+
+July/August 2020
+
+19
+
+Agile and Open-Source Hardware
+
+Abraham Gonzalez is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His research interests include warehouse-scale computing, high-performance microarchitectures, and computer architecture tooling. Gonzalez received the B.S. degree in electrical and computer engineering from the University of Texas at Austin in 2018. Contact him at abe.gonzalez@berkeley.edu.
+Daniel Grubb is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His current research focuses on navigation systems for autonomous robots and agile physical design methodologies. Grubb received the B.S. degree in electrical engineering and computer sciences from the University of California, Berkeley. Contact him at dpgrubb@eecs.berkeley.edu.
+Sagar Karandikar is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His current research focuses on exploring hardware–software codesign in warehouse-scale machines. Karandikar received the B.S. and M.S. degrees in electrical engineering and computer sciences from the University of California, Berkeley. He is a member of the Association for Computing Machinery and IEEE. Contact him at sagark@eecs.berkeley.edu.
+Harrison Liew is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His current research is at the intersection of the BWRC and ADEPT labs, focusing on signal processing generators for multiuser massive MIMO base stations and its implementation in integrated circuits using agile physical design frameworks and methodologies. Liew received the B.S. and M.S. degrees in electrical engineering from Columbia University in 2016. Contact him at harrisonliew@berkeley.edu.
+Albert Magyar is currently working toward the Ph.D. degree at the ADEPT Lab, University of California, Berkeley, advised by K. Asanovic and J. Bachrach. His research interests include increasing productivity of RTL design and improving the usability of FPGA simulation. Contact him at albert.magyar@berkeley.edu.
+
+Howard Mao is currently working toward the Ph.D. degree at the University of California, Berkeley. He is a member of the ADEPT Lab and is interested in designing microarchitectures for datacenter systems. Contact him at zhemao@eecs.berkeley.edu.
+Albert Ou is currently working toward the Ph.D. degree at the University of California, Berkeley. His research interests include energy-efﬁcient vector processor architectures, VLSI implementation, and dataparallel programming models. Ou received the B.S. and M.S degrees in electrical engineering and computer sciences from the University of California, Berkeley, in 2014 and 2015, respectively. He is a student member of IEEE. Contact him at aou@eecs.berkeley.edu.
+Nathan Pemberton is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His current research focuses on computer architecture and operation systems for warehouse-scale computing. Pemberton received the B.S. degree in computer engineering from the University of California Santa Cruz and the M.S. degree in computer science from the University of California, Berkeley. He is a member of the Association for Computing Machinery. Contact him at nathanp@berkeley.edu.
+Paul Rigge is currently working toward the Ph.D. degree at the University of California, Berkeley. His current research focuses on agile hardware methodologies for wireless systems. Rigge received the B.S. degree in electrical engineering and computer science from the University of Michigan in 2012. Contact him at rigge@berkeley.edu.
+Colin Schmidt is currently working toward the Ph.D. degree at the University of California, Berkeley, where he works on architecting, implementing, and building software for vector accelerators. Schmidt received the B.S. degree in electrical and computer engineering and computer science from Cornell University. He is a student member of the Association for Computing Machinery. Contact him at colins@berkeley.edu.
+John Wright is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. Wright received the B.S. degree from the University of Kentucky in 2011 and the M.S. degree from the University of California, Berkeley, in 2017. He was previously with Cypress Semiconductor, San Jose, CA. Contact him at johnwright@berkeley.edu.
+
+20
+
+IEEE Micro
+
+Jerry Zhao is currently working toward the Ph.D. degree at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. His current research focuses on microarchitecture of high-performance processors. Zhao received the B.S. degree in electrical engineering and computer science from the University of California, Berkeley. He is a student member of the Association for Computing Machinery and IEEE. Contact him at jzh@berkeley.edu.
+Yakun Sophia Shao is currently an Assistant Professor at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. Shao received the Ph.D. degree in computer science from Harvard University. Contact her at ysshao@berkeley.edu.
+
+Krste Asanovic is currently a Professor at the Department of Electrical Engineering and Computer Sciences, University of California, Berkeley. Asanovic received the Ph.D. degree in computer science from the University of California, Berkeley. He is a Fellow of IEEE and the Association for Computing Machinery. Contact him at krste@berkeley.edu.
+Borivoje Nikolic is the National Semiconductor Distinguished Professor of Engineering at the University of California, Berkeley. Nikolic received the Ph.D. degree in electrical and computer engineering from the University of California, Davis. He is a Fellow of IEEE. Contact him at bora@eecs.berkeley.edu.
+
+July/August 2020
+
+21
+

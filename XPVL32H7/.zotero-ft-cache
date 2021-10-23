@@ -1,0 +1,1237 @@
+R. M. Tomasulo
+
+An Efficient Algorithm for Exploiting Multiple Arithmetic Units
+
+Abstract: This paper describes the methods employed in the floating-point area of the System/360 Model 91 to exploit the
+existence of multiple execution units. Basic to these techniques is a simple common data busing and register tagging scheme which permits simultaneous execution of independent instructions while preserving the essential precedences inherent in the instruction stream. The common data bus improves performance by efficiently utilizing the execution units without requiring specially optimized code. Instead, the hardware, by 'looking ahead' about eight instructions, automatically optimizes the program execution on a local basis.
+The application of these techniques is not limited to floating-point arithmetic or System/360 architecture. It may be used in almost any computer having multiple execution units and one or more 'accumulators.' Both of the execution units, as well as the associated storage buffers, multiple accumulators and input/output buses, are extensively checked.
+
+Introduction
+
+After storage access time has been satisfactorily reduced execution of floating-point instructions in the IBM Sys-
+
+through the use of buffering and overlap techniques, even tem/360 Model 91. Obviously, one begins with multiple
+
+after the instruction unit has been pipelined to operate at a rate approaching one instruction per cycle,1 there
+
+execution units, in this case an adder and a multiplier /divider.'
+
+remains the need to optimize the actual performance of
+
+It might appear that achieving the concurrent operation
+
+arithmetic operations, especially floating-point. Two of these two units does not differ substantially from the
+
+familar problems confront the designer in his attempt to attainment of fixed-floating overlap. However, in the latter
+
+balance execution with issuing. First, individual operations
+are not fast enough* to allow simple serial execution.
+Second, it is difficult to achieve the fastest execution
+
+case the architecture limits each of the instruction classes
+to its own set of accumulators and this guarantees inde-
+pendence.* In the former case there is only one set of
+
+times in a universal execution unit. In other words, cir- accumulators, which implies program-specified sequences
+
+cuitry designed to do both multiply and add will do of dependent operations. Now it is no longer simply a
+
+neither as fast as two units each limited to one kind of matter of classifying each instruction as fixed-point or
+
+instruction.
+
+floating-point, a classification which is independent of
+
+The first step toward surmounting these obstacles has previous instructions. Rather, it is a question of deter-
+
+been presented," i.e., the division of the execution func- mining each instruction's relationship with all previous,
+
+tion into two independent parts, a fixed-point execu- incompleted instructions. Simply stated, the objective
+
+tion area and a floating-point execution area. While this must be to preserve essential precedences while allowing
+
+relieves the physical constraint and makes concurrent the greatest possible overlap of independent operations.
+
+execution possible, there is another consideration. In order
+
+This objective is achieved in the Model 91 through a
+
+to secure a performance increase the program must con- scheme called the common data bus (COB). It makes
+
+tain an intimate mixture of fixed-point and floating-point possible maximum concurrency with minimal effort
+
+instructions. Obviously, it is not always feasible for the (usually none) by the programmer or, more importantly,
+
+programmer to arrange this and, indeed, many of the by the compiler. At the same time, the hardware required
+
+programs of greatest interest to the user consist almost is small and logically simple. The CnB can function with
+
+wholly of floating-point instructions. The subject of this any number of accumulators and any number of execution
+
+paper, then, is the method used to achieve concurrent units. In short, it provides a hardware algorithm for the
+
+automatic, efficient exploitation of multiple execution
+
+• During the planning phase, floating-point multiply was taken to be
+
+units.
+
+six cycles, divide as eighteen cycles and add as two cycles. A subse-
+
+quent paper" explains how times of 12, and 2 were actually achieved.
+
+* Such dependencies as exist are handled by the store- fetch sequenc-
+
+This permitted the use of only one. adder, pipelined to start an add cycle.
+
+of two, multipliers and one
+
+ing of the storage bus and the condition code control described in the following paper."
+
+25
+
+IBM JOURNAL' JANUARY 1967
+
+STORAGE BUS
+
+• 6
+----~----s
+
+4
+BUFFERS (FLB) 3
+2 f--------
+J
+
+CONTROL
+
+FLOATING-POINT BUFFER
+(FLB) BUS
+
+INSTRUCTION UNIT
+1
+FLOATING OPERAND
+STACK (FlOS)
+-~
+- I DECODER I
+
+1
+
+~
+SINK
+
+• I SOURCE
+
+\ /ADDER
+
+I I RESULT
+•t
+
+ICTRd
+
+Figure 1 Data registers and transfer paths without COB.
+
+1
+i
+CONTROL
+
+r
+8 FLOATING-POINT 4 REGISTERS (FLR) 2
+0
+
+FLOATING-POINT REGiSTER
+(FLR) BUS
+
+•
+CONTROL
+
+1
+STORE 3
+DATA 2
+
+BUFFERS (SOS) 1
+
+i
+
+1
+
+T
+
+1
+
+TO STORAGE
+
+rCTRLI SINK I SOURCE
+~'''~''O"'Y
+
+I RESULT I
+J.
+f
+
+RESULT SUS
+
+The next section of this paper will discuss the physical storage is really the sink of a store. (Rl and R2 refer to
+
+framework of registers, data paths and execution circuitry fields as defined by Systemj360 architecture.)
+
+which is implied by the architecture and the overall CPU
+
+In the pseudo-register-to-register format "seen" by the
+
+structure presented in a previous paper.' Within this
+
+FLOS the R2 field can have three different meanings. It
+
+framework one can subsequently discuss the problem of can bean FLR as in a normal register-to-register instruc-
+
+precedence, some possible solutions, and the selected tion. If the program contains a storage-to-register in-
+
+solution, the CDB. In conclusion will be a summary of struction, the R2 field designates the floating-point buffer
+
+the results obtained.
+
+(FLB) assigned by the instruction unit to receive the
+
+storage operand. Finally, R2 can designate a store data
+
+buffer (SDB) assigned by the instruction unit to store
+
+Definitions and data paths
+While the reader is assumed to be familiar with System/360 architecture and mnemonics, the terminology as modified by the context of the Model 91 organization will be reviewed here. The instruction unit, in preparing instruc-
+
+instructions. In the first two cases R2 is the source of an operand; in the last case it is a sink. Thus, the instruction unit maps all of storage into the 6 floating-point buffers and 3 store data buffers so that the FLOS sees only pseudoregister-to-register operations.
+
+tions for the floating-point operation stack (FLOS), maps
+
+The distinction between source and sink will become
+
+both storage-to-register and register-to-register instruc-
+
+quite important during the discussion of precedence and
+
+tions into a pseudo-register-to-register format. In this
+
+should be fixed firmly in mind. All of the instructions
+
+format RI is always one of the four floating-point regis- (except store and compare) have the following form:
+
+ters (FLR) defined by the architecture. It is usually the sink of the instruction, i.e., it is the FLR whose contents are set equal to the result of the operation. Store opera-
+
+Rl op R2 ------» Rl
+
+Register
+
+Register Register
+
+tions are the sole exception" wherein RI specifies the source of the operand to be placed in storage. A word in
+
+or buffer
+
+26
+
+.. Compares do not, of course) alter the contents of R L
+
+source
+
+source
+
+sink
+
+R. M. TOMASULO
+
+I r---···----- I JNSTRUCTION UNIT
+
+DECODE
+
+~~~~~~fION
+
+_~-1 i~Arf~JT~6~ 3 TO 10 CYCLE ACCESS---....
+
+EXECUTION UNIT
+
+I
+
+I
+
+TRANSMIT OP I
+
+TO FLOS
+
+I
+
+I
+
+I
+
+I ,DLEOCSODE
+
+I~~t~~~I~Lr I I TO UNIT
+
+TRANSMIT FLR
+
+I I I I I I
+I EXECUTioN
+
+-----1
+
+Figure 2 Timing relationship between instruction unit and FLOS decode for the processing of one instruction.
+
+For example, the instruction ADO, 2 means "place the
+double-precision sum of registers a and 2 in register 0,"
+
+adder receives control information which causes it to send data to floating-point register RI, when its source reg-
+
+i.e., RO R2-7 RO. Note that RI is really both a source
+and a sink.* Nevertheless, it will be called the sink and R2
+
+ister is set full by the buffer. If the instruction is a storage-to-register arithmetic func-
+
+the source in all subsequent discussion.
+
+tion, the storage operand is handled as in load (control
+
+This definition of operations and the machine organiza- bits cause it to be forwarded to the proper unit) but the
+
+tion taken together imply a set of data registers with floating-point register, along with the operation, is sent
+
+transfer paths among them. These are shown in Fig. 1. by the decoder to the appropriate unit. After receiving
+
+The major sets of registers (FLR's, FLB's, FLOS and the buffer the unit will execute the operation and send the
+
+SDB's) have already been discussed, both above and in result to register RL
+
+a preceding paper." Two additional registers, one sink
+
+In register-to-register arithmetic instructions two float-
+
+and one source, are shown feeding each execution circuit. ing point registers are transmitted on successive cycles to
+
+Initially these registers were considered to be the internal the appropriate execution unit.
+
+working registers required by the execution circuits and
+
+Stores are handled like storage-to-register arithmetic
+
+put to multiple use in a way to be described below. Later,
+
+functions, except that the content of the floating-point
+
+their function was generalized under the reservation station
+
+register is sent to a store data buffer rather than to an
+
+concept and they were dissociated from their "working" execution unit.
+
+function.
+
+Thus far, the handling of one instruction at a time has
+
+In actually designing a machine the data paths evolve proven rather straightforward. Now consider the following
+
+as the design progresses. Here, however, a complete, first- "program" :
+
+pass data path will be shown to facilitate discussion. To illustrate the operation let us consider, in tum, four kinds
+
+Example 1
+
+of instructions-load of a register from storage, storage- LD FO FLBI LOAD register FOfrom buffer I
+
+to-register arithmetic, register-to-register arithmetic, and store. Let us first see how each can be accomplished in
+
+MD FO FLB2 MULTIPLY register FO by buffer 2
+
+vacuo; then what difficulties arise when each is embedded The load can be handled as before, but what about the
+
+in the context of a program. For simplicity double- multiply? Certainly FO and FLB2 cannot be sent to the
+
+precision (64-bit operands) will be used throughout.
+
+multiplier as in the case of the isolated multiply, since
+
+Figure 2 shows the timing relationship between the FLBI has not yet been set into FO.* This sequence illus-
+
+instruction unit's handling of an instruction and its trates the cardinal precedence principle: No floating-
+
+processing by the FLOS decode. When the FLOS decodes point register may participate in an operation if it is the
+
+a load, the buffer which will receive the operand has not
+
+sink of another, incompleted instruction. That is, a register
+
+yet been loaded from storage.t Rather than holding the cannot be used until its contents reflect the result of the
+
+decode until the operand arrives, the FLOS sets control most recent operation to use that register as its sink.
+
+bits associated with the buffer which cause its content
+
+The design presented thus far has not incorporated any
+
+to be transmitted to the adder when it "goes full." The mechanism for dealing with this situation. Three functions
+
+must be required of any such mechanism:
+
+* This economy of specification compounds the difficulties of achieving concurrency while preserving precedence, as will he seen tater.
+t A FULL/EMPTY control bit indicates this. The bit is set FULL
+
+(1) It must recognize the existence of a dependency.
+
+by the Main Storage Control Element and EMPTY when the buffer is
+
+used. LOAD uses the adder in order to minimize the buffer outgates
+
+* Note that the program calls for the product of FLBl and FLB2 to
+
+and the FLR in gates.
+
+be placed in FO. This hints at the CDB concept.
+
+27
+
+EXPLOITING MULTIPLE ARITHMETIC UNITS
+
+INSTRUCTION UNIT LD FO,DID
+LD F2, C
+
+STORAGE ACCESS
+
+FLU
+FO
+X r----OJ
+
+LD F4, B
+
+MD FO, E AD F2, FO AD F4, A AD F2, F4
+
+10 I
+I0I
+
+LEGEND 0
+
+DECODE
+
+AG ADDRESS GENERATE
+
+STORAGE ACCESS
+
+I x ~--o::f
+
+ID IxI FO
+
+I x 1-1-f--f--1ITJ
+
+ID IxI
+1x I
+
+F2
+X f----t-Q]
+
+X TRANSMISSION
+mFN RESULT TO FLR FN
+
+H
+
+EXECUTION
+
+NOTE: ALTERNATE LINES SHOW FLOS ACTIVITY
+
+1D 1xI
+
+IX~4
+
+I0 IX I
+
+F2
+
+I X 1 x~
+
+I
+
+I 0 1XI
+
+I
+t
+
+31 CYCLES
+(a)
+
+I I I LD FO,O o AG
+
+LO F2,C
+
+I0 IXI I 1 0 1 AG
+
+IX~2
+
+I0 I XI
+
+LD F4,B
+
+I D I AG I
+
+MO FO,E
+
+I0 IXI I 0 I AG I
+
+FO
+x I 1-1-f--f--1ITJ
+
+AD F2,FO
+
+I0 I
+
+ID IxI Ix I
+
+IX~2
+
+AD F4,A AD F2,F4
+
+I 0 lAG 1
+I0 I
+
+IDI x I
+
+N
+
+I x f-----+--OJ
+
+ID Ix I
+
+Ixlx~2
+
+DECODE HOLO·UP
+DUE TO BUSY SINK REG.
+
+I0 IX I
+
+:
+t
+26 CYCLES
+
+(b)
+
++ + * Figure 3 Timing for the instruction sequence required to perform the function A B -+- C D E : (a) without reserva-
+
+tion stations, (b) with reservation stations included in the register set.
+
+(2) It must cause the correct sequencing of the dependent instructions.
+
+meet the performance goal. The next section will present several alternatives for accomplishing these objectives.
+
+(3) It must distinguish between the given sequence and
+
+Preservation of precedence
+
+such sequences as
+
+Perhaps the simplest scheme for preserving precedence is
+
+LD FO, FLBl
+
+as follows. A "busy" bit is associated with each of the four
+
+MD F2, FLB2
+
+floating-point registers. This bit is set when the FLOS
+
+Here it must allow the independent MD to proceed regardless of the disposition of the LD.
+
+decode issues an instruction designating the register as a sink; it is reset when the executing unit returns the result to the register. No instruction can be issued by the FLOS
+
+The first two requirements are necessary to preserve the if the busy bit of its sink is on. If the source of a register-
+
+28
+
+logical integrity of the program; the third is necessary to
+
+to-register instruction has its busy bit on, the FLOS sets
+
+R. M. TOMASULO
+
+control bits associated with the source register. When a plicity they are treated as if they were actual units. Thus,
+
+result is entered into the register, these control bits cause in the future, we will speak of Adder 1 (AI), Adder 2 (A2),
+
+the register to be sent via the FLR bus to the unit waiting etc., and MID 1 and MID 2.
+
+for it as a source.
+
+Figure 3b shows the effect of the addition of reservation
+
+This scheme easily meets the first two requirements.
+
+stations on the problem running time: five cycles have been
+
+The third is met with the help of the programmer; he eliminated. Note that the second AD now overlaps the
+
+must use different registers to achieve overlap. For ex-
++ ample, the expression A B C D * E can be pro-
+
+MD and actually executes before the first AD. While the speed increase is gratifying and the busy bit method easy
+
+grammed as follows:
+
+to implement, there remains a dependence on the pro-
+
+Example 2 LD FO, D
+
+FO = 0
+
+grammer. Note that the expression could have been coded this way:
+
+LD F2, C LD F4, B MD FO, E AD F2, FO AD F4, A AD F2, F4
+
+F2 = C F4 = B FO = D*E
+F2=C D*E
+F4 = A B
+F2 A B C+D*E
+
+Example 3a
+LD Fa, E MD Fa, 0 AD Fa, C AD Fa, B AD FO, A
+
+The busy bit scheme should allow the second add and the multiply to be executed simultaneously (really, in any order) since they use different sinks. Unfortunately, the timing chart of Fig. 3a shows not only that the expected
+
+Now overlap is impossible and the program will run six cycles longer despite having two fewer instructions. Suppose however, that this program is part of a loop, as below:
+
+overlap does not occur but also that many cycles are lost to transmission time. The overlap fails to materialize because the first add uses the result of the multiply, and
+
+Example 3b
+
+LOOP 1
+
+LD FO, Ei
+
+the adder must wait for that result. Cycles are lost to control because so many of the instructions use the adder. The FLOS cannot decode an instruction unless a unit is available to execute it. When an assigned unit finishes execution, it takes one cycle to transmit the fact to the FLOS so that it can decode a waiting instruction. Similarly, when the FLOS is held up because of a busy sink register,
+
+MD Fa, Di AD FO, Ci AD FO, Bi AD PO, Ai STD Fa, Fi BXH i, -1, 0, LOOP 1 (decrease i by 1,
+branch if i > 0)
+
+it cannot begin to decode until the result has been entered
+
+LOOP 2
+
+LD FO, Ei
+
+into the register.
+
+LD F2, Ei+ 1
+
+One solution that could be considered is the addition of
+
+MD FO, Di
+
+one or more adders. If this were done and some programs
+
+MD F2, Di
+
+timed, however, it would become apparent that the execu-
+
+AD Fa, Ci
+
+tion circuitry would be in use only a small part of the time.
+
+AD F2, Ci
+
+Most of the lost time would occur while the adder waited
+
+AD Fa, Bi
+
+for operands which are the result of previous instructions.
+
+AD F2, Bi 1
+
+What is required is a device to collect operands (and con-
+
+AD FO, Ai
+
+trol information) and then engage the execution circuitry
+
+AD F2, Ai+ 1
+
+when all conditions are satisfied. But this is precisely the function of the sink and source registers in Fig. 1. There-
+
+STD Fa, Fi
++ STD F2, Fi 1
+
+fore, the better solution is to associate more than one set of
+
+BXH i, - 2, 0, LOOP 2
+
+registers (control, sink, source) with each execution unit.
+Each such set is called a reservation station. * Now instruc-
+
++ Iteration n 1 of LOOP 1 will appear to the FLOS to
+
+tion issuing depends on the availability of the appropriate
+
+depend on iteration n, since the instructions in both
+
+kind of reservation station. In the Model 91 there are three
+
+iterations have the same sink. But it is clear that the two
+
+add and two multiply Idivide reservation stations. For sim-
+
+iterations are, in fact, independent. This example illustrates
+
+a second way in which two instruction sequences can be
+
+• The fetch and store buffers can be considered as specialized, oneoperand reservation stations. Previous systems, such as the I.B:i\f 70JD,
+
+independent. The first way, of course, is for the two strings
+
+have in effect employed one "reservation station" ahead of each execution unit. The extension to several reservation stations adds to the
+
+to have different sink registers. The second way is for the
+
+effectiveness of the execution hardware,
+
+second string to begin with a load. By its definition a
+
+29
+
+EXPLOITING MULTlPLE ARITHMETIC UNITS
+
+load launches a new, independent string because it in-
+
+the units which feed the CDB. Thus the floating-point
+
+structs the computer to destroy the previous contents of
+
+buffers 1 through 6 are assigned the numbers 1 through 6;
+
+the specified register. Unfortunately, the busy bit scheme
+
+the three adders (actually reservation stations) are num-
+
+does not recognize this possibility. If overlap is to be
+
+bered 10 through 12; the two multiplier/dividers are 8 and
+
+achieved with this scheme, the programmer must write
+
+9. Since there are eleven contributors to the CDB, a four-
+
+LOOP 2. (This technique is called doubling or unravelling.
+
+bit binary number sufficesto enumerate them. This number
+
+It requires twice as much storage but it runs faster by
+
+is called a tag. A tag is associated with each of the four
+
+enabling two iterations to be executed simultaneously.)
+
+floating-point registers (in addition to the busy bit*),
+
+Attempts were made to improve the busy bit scheme
+
+with both the source and sink registers of each of the five
+
+so as to handle this case. The most tempting approach is
+
+reservation stations and with each of the three Store Data
+
+the expansion of the bit into a counter. This would appear
+
+Buffers. Thus a total of 17 four-bit fag registers has been
+
+to allow more than one instruction with a given sink to
+
+added, as shown in Fig. 4.
+
+be issued. As each is issued, the FLOS increments the
+
+Tags also appear in another context. A tag is generated
+
+counter; as each is executed the counter is decremented.
+
+by the CDB priority controls to identify the unit whose
+
+However, major difficulty is caused by the fact that storage
+
+result will next appear on the CDB. Its use will be made
+
+operands do not return in sequence. This can cause the
++ result of instruction n 1 to be placed in a register before
+
+clear shortly. Operation of this complex is as follows. In decoding
+
+that of n. When n completes, it erroneously destroys the
+
+each instruction the FLOS checks the busy bit of each of
+
+register contents.
+
+the specified floating-point registers. If that bit is zero,
+
+Some of the other proposals considered would, if imple-
+
+the content of the register(s) may be sent to the selected unit
+
+mented, have been of such logical complexity as to jeop-
+
+via the FLR bus, just as before. Upon issuing the instruc-
+
+ardize the achievement of a fast cycle.
+
+tion, which requires only that a unit be available to execute
+
+The Common Data Bus
+
+it, the FLOS not only sets the busy bit of the sink register but also sets its tag to the designation of the selected unit.
+
+The preceding sections were intended to portray the dif- The source register control bits remain unchanged. As an
+
+ficulties of achieving concurrency among floating-point
+
+example, take the instruction, AD FO, FLBI. After issuing
+
+instructions and to show some of the steps in the evolution
+
+this instruction to Adder 1 the control bits of FO would be:
+
+of a design to overcome them. It is clear, in retrospect, that the previous algorithms failed for lack of a way to
+
+BB
+
+1
+
+uniquely identify each instruction and to use this informa-
+
+TAG 1010 (AI)
+
+tion to sequence execution and set results into the floating-
+
+So far the only change from previous methods is the
+
+point registers. As far as action by the FLOS is concerned,
+
+setting of the tag. The significant difference occurs when
+
+the only thing unique to a particular instruction is the
+
+the FLOS finds the busy bit on at decode time. Previously,
+
+unit which will execute it. This, then, must form the
+
+this caused a suspension of decoding until the bit went
+
+basis of the common data bus (CDB).
+
+off. Now the FLOS will issue the instruction and update
+
+Figure 4 shows the data paths required for operation of the tag. In so doing it will not transmit the register con-
+
+the CDB. * When Fig. 4 is compared with Fig. 1 the
+
+tents to the selected unit but it will transmit the "old" tag.
+
+following changes, in addition to the reservation stations,
+
+For example, suppose the previous AD was followed by a
+
+are evident: Another output port has been added to the
+
+second AD. At the end of the decode of this second AD,
+
+buffers. This port has been combined with the results
+
+FO's control bits would be:
+
+from the adder and multiplier/divider; the combination is the CDB. The CDB now goes not only to the registers but also to the sink and source registers of all reservation
+
+BB 1
+
+TAG 1011 (A2)
+
+stations, including the store data buffers but excluding
+
+One cycle later the sink tag of the A2 reservation station
+
+the floating-point buffers. This data path will enable loads
+
+would be 1010, i.e., the same as AI, the unit whose result
+
+to be executed without the adder and will make the re-
+
+will be required by A2.
+
+sult of any operation available to all units without first
+
+Let us look ahead temporarily to the execution of the
+
+going through a floating-point register.
+
+first AD. Some time after the start of execution but before
+
+Note that the CDB is fed by all units that can alter a
+
+the end," Al will request the CDB. Since the CDB is fed
+
+register and that it feeds all units which can have a register
+
+by many sources, its time-sharing is controlled by a central
+
+as an operand. The control part of the CDB enumerates
+
+* The busy bit is no longer necessary since its function can be per-
+
+formed by use of an unassigned tag number. However, it is conve-
+
+* The FLB and FLR busses are retained for performance reasons.
+
+nient to retain it.
+
+Everything conld be done by a slight extension of the CDB but time
+
+t Since the required lead time is two cycles, the request is made at
+
+30
+
+would be lost due to conflicts over the common facility.
+
+the start of execution for an add-type instruction.
+
+R. M. TOMASULO
+
+STORAGE BUS
+~
+~~::~(FlB) 4 CONTROL 3 1
+
+INSTRUCTION UNIT
+!
+- ~....
+._FLOATING· .. POINT
+.....O...P- ERAND
+STACK (FLOS)
+,
+
++
+8
+
+BUSY BITS
+
+FLOATING·POINT 4 TAGS
+f..-....R...E._GIS..TE_R...S_(F- IR)-2
+
+0
+
+I DECODER I
+
+I
+
+I
+
+•
+I CONTROL TAGS
+
+•+
+STORE 3 DATABUEEERS 2
+(SOB) 1
+
+I TAG I TAG I TAG
+
+•+
+
+SINK SINK SINK
+
+~~~ TAG! SOURCE
+I ! TAG! SO~t-..
+! TAG SOURCE CTRL
+
+/ADDER
+
+• I RESULT !
+
+ELB BUS FLR BUS
+COB
+COMMON DATA BUS (CDB)
+
+-.
+.._-"" ~
+
+t
+
++
+K*-;INK TAG SINK
+
+I TAG I SOURCE ICTRL!
+I i TAG! SOURCE CTRL!
+
+\~,,~""""!
+
+I RESULT I
+t
+t
+
+Figure 4 Data registers and transfer paths, including CDB and reservation stations.
+
+priority circuit. If the CDB is free, the priority control unit in place of the register contents. The unit continuously
+
+signals the requesting adder, AI, to outgate its result and compares this tag with that generated by the CDB priority
+
+it broadcasts the tag of the requestor (1010 in this case) control. When a match is detected, the unit ingates from
+
+to all reservation stations. Each active reservation station
+
+the CDB. The unit begins executing as soon as it has both
+
+(selected but awaiting a register operand) compares its
+
+operands. It may receive one or both operands from either
+
+sink and source tags to the CDB tag. If they match, the
+
+the CDB or the FLR bus; the source operand for storage-
+
+reservation station ingates the data from the CDB. In a
+
+to-register instructions is transmitted via the FLB bus.
+
+similar manner, the CDB tag is compared with the tag
+
+As each instruction is issued the existing tag(s) is (are)
+
+of each busy floating-point register. All busy registers
+
+transmitted to the selected unit and then the sink tag is
+
+with matching tags ingate from the CDB and reset their updated. By passing tags around in this fashion, all opera-
+
+busy bits.
+
+tions having the same sink are correctly sequenced while
+
+Two steps toward the goal of preserving precedence other operations are allowed to proceed independently.
+
+have been accomplished by the foregoing. First, the second Finally, the floating-point register tag controls the chang-
+
+AD cannot start until the first AD finishes because it
+
+ing of the register itself, thereby ensuring that only the
+
+cannot receive both its operands until the result of the
+
+most recent instruction will change the register. This has
+
+first AD appears on the CDB. Secondly, the result of the
+
+the interesting consequence that a loop of the following
+
+first AD cannot change register FO once the second AD kind:
+
+is issued, since the tag in FO will not match At. These are
+
+precisely the desired effects.
+
+Example 5
+
+Before proceeding with more detailed considerations let us recapitulate the essence of the method. The floatingpoint register tag identifies the last unit whose result is destined for the register. When an instruction is issued
+
+LOOP LD FO, Ai AD FO, Bi STD FO, Ci STORE
+
+that requires a busy register the tag is sent to the selected
+
+BXH i, 1, 0, LOOP
+
+31
+
+EXPLOITING MULTIPLE ARITHMETIC UNITS
+
+o COB SLOT
+
+store took place during the CDB cycle following the divide.
+
+fLOS DECODES NOT SHOWN
+
+FO
+0 LD Fa, FLBII 0 IAGI ' , ,--
+
+DO Fa, FLB2 IDIAGI
+
+>--
+
+--1dO
+
+STD Fa LD Fa, FLB3 AD Fa, FLB4
+
+IDIAGI
+
+E;;J0
+
+0 IDIAGI ,---
+
+I 0 IAGI
+
+>----CI0
+
+r - - - - - - - - - - ..
+
+,I r-'FO
+
+I I
+
+I L_.J
+
+I
+
+I
+
+FO I
+
+: ~---[=-J:
+
+I..
+
+.JI
+
+WITH COB
+
+WITH BUSY BIT SCHEME ONLY
+
+In a similar fashion a register-to-register load of a busy register is accomplished by moving the tag of the source floating-point register to the tag of the sink floating-point register. For example, in the sequence
+
+AD LDR
+
+FO, FLBl F2, FO move FO to F2
+
+the tag of FO will be 1010 (AI) at the time the LDR is
+
+Figure 5 Timing sequence for Example 6, showing effect of CDB.
+
+decoded. The decoder simply sets F2's tag to 1010. Now, when the result of the AD appears on the CDB both FO
+
+and F2 will ingate since the CDB tag of 1010 will match
+
+the tag of each register. Thus, no unit or extra time was
+
+required for the execution of the LDR.
+
+A number of details have been omitted from this dis-
+
+may execute indefinitely without any change in the contents of FO. Under normal conditions only the final iteration will place its result in FO.
+As mentioned previously, there are two ways of starting an independent instruction string. The first is to specify a different sink register and the second is to load a register. The CDB handles the former in essentially the same way as the busy bit scheme. The load, which had been a difficult problem previously, is now very simple. Regardless of the register tag or busy bit, a load turns the busy bit on and sets the tag equal to the floating-point buffer which the instruction unit had assigned to the load. This causes subsequent instructions to sequence on the buffer rather than on whatever unit may have identified the register as its sink prior to the load. The buffer controls are set to request the CDB when the storage operand arrives. The following example and Fig. 5 show this clearly.
+
+cussion in order to clarify the concept, but really only two are of operational significance. First, every unit must request the CDB two cycles before it finishes execution. (These two cycles are required for propagation of the request to the CDB controls, the establishment of priority among competing units, and propagation of a "select" signal to the chosen unit.) This limits the execution time of any instruction to a two-cycle minimum. (Of course, the faster the execution the less the need for, or gain from, concurrency.) It also adds one* cycle to the access time for loads. Because of buffering and overlap, this does not usually cause an increase in problem running time.
+The second point is concerned with mixed precision. Because the architectural definition causes the low-order part of an FLR to be preserved during single-precision operation, an error can occur in the following kind of program:
+
+Example 6
+
+LD
+
+FO,
+
+FLBI
+
+AD
+
+FO,
+
+FLB2
+
+LD
+
+FO, FLBl
+
+AE
+
+FO,
+
+FLB3
+
+DD
+
+FO, FLB2
+
+DIVIDE
+
+STD
+
+FO, A
+
+LD
+
+FO, FLB3
+
+AD
+
+FO, FLB4
+
+Since only the last instruction, which is single-precision, will change FO,the low order result of the double-precision AD will be lost. This is handled by associating a bit with each register to indicate whether a particular register is
+
+Note that the add finishes before the divide. The dashed
+
+the sink of an outstanding single- or double-precision
+
+line portion of Fig. 5 shows what would happen if the
+
+instruction. If this bit does not match the "length" of the
+
+busy bit scheme alone were used. Figure 6 displays the
+
+instruction being decoded, the decode is suspended until
+
+sequences followed under the two schemes. This figure the busy bit goes off. While this stratagemt solves the
+
+graphically illustrates the bottleneck caused by using a logic problem, it does so at the expense of performance.
+
+single sink register with a busy bit scheme. Because all Unfortunately, no way has been found to avoid this. Note,
+
+data must pass through this register, the program is however, that all-single- or all-double-precision programs
+
+reduced to strictly sequential execution, steps 1 through 7. run at the maximum possible speed. It is only the interface
+
+With the CDB, on the other hand, the sink register hardly
+
+between single- and double-precision to the same sink
+
+appears and the program is broken into two independent, register that suffers delay.
+
+concurrent sequences. This facility of the CDB obviates the need for loop doubling.
+The CDB makes it possible to execute some instructions
+
+* It does not add two cycles since storage gives one cycle prenotifica-
+tion of the arrival of data.
+t Further complications arise from the fact that single-precision
+multiply produces a double-precision product. This is handled sepa-
+
+32
+
+in, effectively, no time at all. In the above example the
+
+rately but with the same time penalty as above.
+
+R. M. TOMASULO
+
+(a)
+(b) Figure 6 Functional sequence for Example 6 (a) with busy
+bit controls only, (b) with COB.
+Conclusions Two concepts of some significance to the design of highperformance computers have been presented. The first, reservation stations, is simply an expeditious method of buffering, in an environment where the transmission time between units is of consequence. Because of the disparity between storage access and circuit speeds and because of dependencies between successive operations, it is observed (given multiple execution units) that each unit spends much of its time waiting for operands. In effect, the reservation stations do the waiting for operands while the execution circuitry is free to be engaged by whichever reservation station fills first.
+The second, and more important, innovation, the CDB, utilizes the reservation stations and a simple tagging scheme to preserve precedence while encouraging concurrency. In conjunction with the various kinds of buffering in the CPU, the CDS helps render the Model 91 less sensitive to programming. It should be evident, however, that the programmer still exercises substantial control over how much concurrency will occur. The two different
++ + + programs for doing A B C D * E illustrate this
+clearly.
+
+It might appear that the CDB adds one cycle to the execution time of each operation, but in fact it does not. In practice only 30 nsec of the 60-nsec CDB interval are required to perform all of the CDB functions. The remaining time could. in this case, be used by the execution unit to achieve a shorter effective cycle. For example, if an add requires 120 nsec, then add plus the COB time required is 150 nsec. Therefore, as far as the add is concerned. the machine cycle could be 50 nsec, Besides, even without the CDB, a similar amount of time would be required to transmit results both to the floating-point registers and back as an input to the unit generating the result.
+The following program. a typical partial differential equation inner loop, illustrates the possible performance increase.
+
+LOOP
+
+MD AD LD SDR MDR ADZ STD BXH
+
+FO, Ai FO, Bi F2, Ci F2, FO F2. F6 F2. Ci F2, Ci i, -1, 0,
+
+LOOP
+
+Without the CDB one iteration of the loop would use 17 cycles, allowing 4 per MD, 3 per AD and nothing for LD or STD. With the CDB one iteration requires 11 cycles. For this kind of code the CDB improves performance by about one-third.
+
+Acknowledgments
+The author wishes to acknowledge the contributions of Messrs. D. W. Anderson and D. M. Powers, who extended the original concept, and Mr. W. D. Silkman, who implemented all of the central control logic discussed in the paper.
+
+References
+L O. W. Anderson, F. J. Sparacio and R. M. Tomasulo, "The System/360 Model 91: Machine Philosophy and Instruction Handling," IBM Journal 11, 8 (1967) (this issue).
+2. S. F. Anderson, J. Earle, R. E. Goldschmidt and D. M. Powers, "The System/360 Model 91 Floating-Point Execution Unit," IBM Journal 11, 34 (1967) (this issue).
+
+Received September 16, 1965.
+
+33
+EXPLOITING MULTIPLE ARITHMETIC UNITS
+

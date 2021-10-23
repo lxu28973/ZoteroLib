@@ -1,0 +1,665 @@
+We believe the key to the 10's longevity is its
+basically simple, clean structure with adequately large
+(one Mbyte) address space that allows users to get
+work done. In this way, it has evolved easily with use
+and with technology. An equally significant factor in
+its success is a single operating system environment
+enabling user program sharing among all machines.
+The machine has thus attracted users who have built
+significant languages and applications in a variety of
+environments. These user-developers are thus the
+dominant system architects-implementors.
+In retrospect, the machine turned out to be larger
+and further from a minicomputer than we expected.
+As such it could easily have died or destroyed the tiny
+DEC organization that started it. We hope that this
+paper has provided insight into the interactions of its
+development.
+Acknowledgments. Dan Siewiorek deserves our
+greatest thanks for helping with a complete editing of
+the text. The referees and editors have been especially
+helpful. The important program contributions by users
+are too numerous for us to give by name but here are
+m o s t o f t h e m : APL, Basic, BLISS, DDT, LISP, P a s c a l ,
+Simula, sos, TECO, and Tenex. Likewise, there have
+been so many contributions to the 10's architecture
+and implementations within DEC and throughout the
+user community that we dare not give what would be a
+partial list.
+Received April 1977; revised September 1977
+References 1. Bell, G., Cady, R., McFarland, H., Delagi, B., O'Laughlin, J., and Noonan, R. A new architecture for minicomputers---,the DEC PDP-11. Proc. AFIPS 1970 SJCC, Vol. 36, AFIPS Press, Montvale, N.J., pp. 657-675. 2. Bell, G., and Freeman, P. C a i - A computer architecture for AI research AFIPS Conf. Proc. Vol. 38 (Spring, 1971), 779-790. 3. Bell, G., and Newell, A. Computer Structures: Readings and Examples. McGraw-Hill, New York, 1971. 4. Bobrow, D.G., Burchfiel, J.D., Murphy, D. L., and Tomlinson, R.S. TENEX, A Paged Time Sharing System for the PDP-10. Comm. ACM 15, 3 (March 1972), 135-143. 5. Bullman, D.M. Editor, stack computers issue. Computer 10, 5 (May 1977), 14-52. 6. Clark, W.A. The Lincoln TX-2 computer. Proc. WJCC 1957, Vol. 11, pp. 143-171. 7. Lunde, A. Empirical evaluation of some features of Instruction Set Processor architecture. Comm. ACM 20, 3 (March 1977), 143152. 8. Mitchell, J.L., and Olsen, K.H. TX-0, a transistor computer. Proc. EJCC 1956, Vol. 10, pp. 93-100. 9. McCarthy, J. Time Sharing Computer Systems, Management and the Computer of the Future M. Greenberger, Ed., M.I.T. Press, Cambridge, Mass., 1962, pp. 221-236. 10. Murphy, D.L. Storage organization and management in TENEX. Proc. AFIPS 1972 FJCC, Vol. 41, Pt. I, AFIPS Press, Montvale, N.J., pp. 23-32. 11. Olsen, K.H. Transistor circuitry in the Lincoln TX-2. Proc. WJCC 1957, Vol. 11, pp. 167-171. 12. Roberts, L.G. Ed. Section on Resource Sharing Computer Networks. AFIPS 1970 SJCC, Vol. 36, AFIPS Press, Montvale, N.J., pp. 543-598. 13. Wulf, W., and Bell, G. C.mmp--A mutli-mini-processor.Proc. AFIPS 1972 FJCC, Vol. 41, AFIPS Press, Montvale, N.J., pp. 765-777. 14. Wulf, W., Russell, D., and Habermann, A.N. BLISS: A language for systems programming. Comm. ACM 14, 12 (Dec. 1971), 780-790.
+63
+
+Computer Systems
+
+G. Bell, S. H. Fuller, and D. Siewiorek, Editors
+
+The CRAY- 1
+
+Computer System
+
+Richard M. Russell Cray Research, Inc.
+
+This paper describes the CRAY,1, discusses the evolution of its architecture, and gives an account of some of the problems that were overcome during its manufacture.
+The CRAY-1 is the only computer to have been built to date that satisfies ERDA's Class VI requirement (a computer capable of processing from 20 to 60 million floating point operations per second)
+[11. The CRAY-I's Fortran compiler (CVT) is designed
+to give the scientific user immediate access to the benefits of the CRAY-rs vector processing architecture. An optimizing compBer, cFr, "vectorizes" innermost DO loops. Compatible with the ANSI 1 9 6 6 Fortran Standard and with many commonly supported Fortran extensions, CVTdoes not require any source program modifications or the use of additional nonstandard Fortran statements to achieve vectorization. Thus the user's investment of hundreds of man months of effort to develop Fortran programs for other contemporary computers is protected.
+Key Words and Phrases: architecture, computer systems
+CR Categories: 1.2, 6.2, 6.3
+
+Introduction
+
+Vector processors are not yet commonplace machines in the larger-scale computer market. At the time of this writing we know of only 12 non-CRAY-1 vector processor installations worldwide. Of these 12, the most powerful processor is the ILLIAC IV (1 installation), the most populous is the Texas Instruments Advanced Scientific Computer (7 installations) and the most publicized is Control Data's STAR 100
+
+Copyright © 1977, Association for Computing Machinery, Inc. General permission to republish, but not for profit, all or part of this material is granted provided that ACM's copyright notice is given and that" reference is made to the publication, to its date of issue, and to the fact that reprinting privileges were granted by
+permission of the Association for Computing Machinery.
+Author's address: Cray Research Inc., Suite 213, 7850 Metro Parkway, Minneapolis, MN 55420.
+
+Communications
+of the ACM
+
+January 1978 Volume 21 Number 1
+
+(4 installations). In its report on the CRAY-1, Auerbach Computer Technology Reports published a comparison of the CRAY-1, the ASC, and the STAR 100 [2]. The CRAY-1 is shown to be a more powerful computer than any of its main competitors and is estimated to be the equivalent of five IBM 370/195s.
+Independent benchmark studies have shown the CRAY-1 fully capable of supporting computational rates of 138 million floating-point operations per second (MFLOPS) for sustained periods and even higher rates of 250 MrLOPS in short bursts [3, 4]. Such comparatively high performance results from the CRAY-1 internal architecture, which is designed to accommodate the computational needs of carrying out many calculations in discrete steps, with each step producing interim results used in subsequent steps. Through a technique called "chaining," the CRAY-1 vector functional units, in combination with scalar and vector registers, generate interim results and use them again immediately without additional memory references, which slow down the computational process in other contemporary computer systems.
+Other features enhancing the CRAY-I's computational capabilities are: its small size, which reduces distances electrical signals must travel within the computer's framework and allows a 12.5 nanosecond clock period (the CRAY-1 is the world's fastest scalar processor); a one million word semiconductor memory equipped with error detection and correction logic (SECD~D); its 64-bit word size; and its optimizing Fortran compiler.
+Architecture
+The CRAY-1 has been called "the world's most expensive love-seat" [5]. Certainly, most people's first reaction to the C R A Y - I is that it is so small. But in computer design it is a truism that smaller means faster. The greater the separation of components, the longer the time taken for a signal to pass between them. A cylindrical shape was chosen for the CRAY-1 in order to keep wiring distances small.
+Figure 1 shows the physical dimensions of the machine. The mainframe is composed of 12 wedgelike columns arranged in a 270 ° arc. This leaves room for a reasonably trim individual to gain access to the interior of the machine. Note that the love-seat disguises the power supplies and some plumbing for the Freon cooling system. The photographs (Figure 2 and 3) show the interior of a working CRAY-1 and an exterior view of a column with one module in place. Figure 4 is a photograph of the interior of a single module.
+An Analysis of the Architecture Table I details important characteristics of the
+CRAY-1 Computer System. The CRAY-1 is equipped with 12 i/o channels, 16 memory banks, 12 functional
+64
+
+Fig. 1. Physical organization of mainframe.
+
+1,
+
+1031/2"
+
+,I
+
+- Dimensions Base-103½ inches diameter by 19 inches high Columns-56½ inches diameter by 77 inches high including height of base
+--24 chassis - 1662 modules; 113 module types --Each module contains up to 288 IC packages per module -Power consumption approximately 115 kw input for maximum
+memory size --Freon cooled with Freon/water heat exchange -Three memory options -Weight 10,500 lbs (maximUmmemory size)
+-Three basic chip types 5/4 NAND gates Memory chips
+Register chips
+
+units, and more than 4k bytes of register storage. Access to memory is shared by the i/o channels and high-speed registers. The most striking features of the CRAY-1 are: only four chip types, main memory speed, cooling system, and computation section.
+
+Four Chip Types Only four chip types are used to build the CRAY-
+1. These are 16 × 4 bit bipolar register chips (6 nanosecond cycle time), 1024 × 1 bit bipolar memory chips (50 nanosecond cycle time), and bipolar logic chips with subnanosecond propagation times. The logic chips are all simple low- or high-speed gates with both a 5 wide and a 4 wide gate (5/4 NAND). Emittercoupled logic circuit (ECL) technology is used throughout the CRAY-1.
+The printed circuit board used in the CRAY-1 is a 5-layer board with the two outer surfaces used for signal runs and the three inner layers for -5.2V, -2.0V, and ground power supplies. The boards are six inches wide, 8 inches long, and fit into the chassis as shown in Figure 3.
+All integrated circuit devices used in the CRAY-1 are packaged in 16-pin hermetically sealed flat packs supplied by both Fairchild and Motorola. This type of package was chosen for its reliability and compactness. Compactness is of special importance; as many as 288 packages may be added to a board to fabricate a module (there are 113 module types), and as many as 72 modules may be inserted into a 28-inch-high chassis.
+
+Communications of the ACM
+
+January 1978 Volume 21 Number 1
+
+Fig. 2. The CRAY-1 Computer.
+
+Fig. 4. A single module.
+
+Fig. 3. CRAY-1 modules in place.
+Such component densities evitably lead to a mammoth cooling problem (to be described).
+Main Memory Speed
+CRAY-1 memory is organized in 16 banks, 72 modules per bank. Each module contributes 1 bit to a 64-bit word. The other 8 bits are used to store an 8-bit check byte required for single-bit error correction, double-bit error detection (SECDEO). Data words are stored in 1-bank increments throughout memory. This organization allows 16-way interleaving of memory accesses and prevents bank conflicts except in the case
+65
+
+Table I. CRAY-1 CPU characteristics summary
+Computation Section Scalar and vector processing modes 12.5 nanosecond clock period operation 64-bit word size Integer and floating-point arithmetic Twelve fully segmented functional units Eight 24-bit address (A) registers Sixty-four 24-bit intermediate address (B) registers Eight 64-bit scalar(S) registers Sixty-four 64-bit intermediate scalar (T) registers Eight 64-element vector (V) registers (64-bits per element) Vector length and vector mask registers
+One 64-bit real time clock (RT) register
+Four instruction buffers of sixty-four 16-bit parcels each 128 basic instructions Prioritized interrupt control Memory Section 1,048,576 64-bit words (plus 8 check bits per word) 16 independent banks of 65,536 words each 4 clock period bank cycle time 1 word per clock period transfer rate for B, T, and V registers 1 word per 2 clock periods transfer rate for A and S registers 4 words per clock period transfer rate to instruction buffers (up to
+16 instructions per clock period) i/o Section
+24 i/o channels organized into four 6-channel groups Each channel group contains either 6 input or 6 output channels Each channel group served by memory every 4 clock periods Channel priority within each channel group 16 data bits, 3 control bits per channel, and 4 parity bits Maximum channel rate of one 64-bit word every 100 nanoseconds Maximum data streaming rate of 500,000 64-bit words/second Channel error detection
+
+of memory accesses that step through memory with either an 8 or 16-word increment.
+Cooling System
+The CRAY-1 generates about four times as much heat per cubic inch as the 7600. To cool the CRAY-1 a new cooling technology was developed, also based on Freon, but employing available metal conductors in a new way. Within each chassis vertical aluminum/ stainless steel cooling bars line each column wall. The
+
+Communications of the ACM
+
+January 1978 Volume 21 Number 1
+
+Fig. 5. Block diagram of registers.
+
+VECTOR REGISTERS
+
+,K-'-']
+
+v7
+
+/~-i
+
+v6
+
+//~-.I '
+
+v5
+
+~~_.~
+
+v3v4
+
+Z.Z~ I
+
+vlv2 ....
+
+/j/ co,'
+
+VO
+
+Vj
+Vk Vi
+
+4EMOR)
+
+Vector
+
+Control
+
+i
+
+.SJ
+
+I
+
+v.
+
+F
+
+.~i
+
+~ SCALARREGISTERS
+oo
+
+T77
+((Ah) + jkm) ~'?" I
+
+s~~
+
+SO
+
+~----~-
+
+~XCn~aognel
+
+ADDRESS REGISTERS
+
+Vector
+
+Shlftl
+VECTOR I I _F
+vj
+FLOATING POINT
+
+Ak
+
+Ak
+
+ADDRESS
+
+r
+n || !J
+
+l ,,P
+
+control
+
+FUNCTIONAL UNITS
+
+I 71 I I I~
+INSTRUCTION BUFFERS
+
+L,, F ....
+
+Freon refrigerant is passed through a stainless steel tube within the aluminum casing. When modules are in place, heat is dissipated through the inner copper heat transfer plate in the module to the column walls and thence into the cooling bars. The modules are mated with the cold bar by using stainless steel pins to pinch the copper plate against the aluminum outer casing of the bar.
+To assure component reliability, the cooling system
+66
+
+was designed to provide a maximum case temperature of 130°F (54°C). To meet this goal, the following temperature differentials are observed:
+
+Temperature at center of module Temperature at edge of module Cold plate temperature at wedge Cold bar temperature Refrigerant tube temperature
+
+130°F (54°C) l18°F (48°C) 78°F (25°C) 70°F (21°C) 70°F (21°C)
+
+Communications of
+the ACM
+
+January 1978 Volume 21
+Number 1
+
+Functional Units There are 12 functional units, organized in four
+groups: address, scalar, vector, and floating point. Each functional unit is pipelined into single clock segments. Functional unit time is shown in Table II. Note that all of the functional units can operate concurrently so that in addition to the benefits of pipelining (each functional unit can be driven at a result rate of 1 per clock period) we also have parallelism across the units too. Note the absence of a divide unit in the CRAY-1. In order to have a completely segmented divide operation the CRAY-1 performs floating-point division by the method of reciprocal approximation. This technique has been used before (e.g. IBM System/ 360 Model 91).
+Registers Figure 5 shows the CRAY-1 registers in relation-
+ship to the functional units, instruction buffers, i/o channel control registers, and memory. The basic set of programmable registers are as follows:
+8 24-bit address (A) registers 64 24-bit address-save (B) registers 8 64-bit scalar (S) registers 64 64-bit scalar-save (T) registers 8 64-word (4096-bit) vector (V) registers
+Expressed in 8-bit bytes rather than 64-bit words, that's a total of 4,888 bytes of high-speed (6ns) register storage.
+The functional units take input operands from and store result operands only to A, S, and V registers. Thus the large amount of register storage is a crucial factor in the CRAY-I's architecture. Chaining could not take place if vector register space were not available for the storage of final or intermediate results. The B and T registers greatly assist scalar performance. Temporary scalar values can be stored from and reloaded to the A and S register in two clock periods. Figure 5 shows the CRAY-I's register paths in detail. The speed of the eFT Fortran I V compiler would be seriously impaired if it were unable to keep the many Pass 1 and Pass 2 tables it needs in register space, Without the register storage provided by the B, T, and V registers, the CRAY-I's bandwidth of only 80 million words/second would be a serious impediment to performance.
+
+Instruction Formats
+
+Instructions are expressed in either one or two 16-
+
+bit parcels. Below is the general form of a CRAY-1
+
+instruction. Two-parcel instructions may overlap mem-
+
+ory-word boundaries, as follows:
+
+Fields
+
+g
+
+h
+
+i
+
+j
+
+k
+
+m
+
+0-3 4-6 7-9 10-12 1 3 - 1 5 16-31
+
+Bit posi- (4) (3) (3) (3) (3)
+
+(16)
+
+tions
+
+Parcel 1
+
+Parcel 2
+
+The computation section processes instructions at a maximum rate of one parcel per clock period.
+
+67
+
+Table II. CRAY-1 functional units
+
+Register usage
+
+Address function units
+
+address add unit
+
+A
+
+address multiply unit
+
+A
+
+Scalar functional units
+
+scalar add unit
+
+S
+
+scalar shift unit
+
+S
+
+scalar logical unit population/leading zero count
+unit Vector functional units
+vector add unit vector shift unit vector logical unit Floating-point functional units floating-point add unit floating-point multiply unit reciprocal approximation unit
+
+S
+S
+V V V
+S and V S and V S and V
+
+Functional unit time (clock pe-
+riods)
+2 6
+3 2 or 3 if double-
+word shift 1
+3
+3 4 2
+6 7 14
+
+For arithmetic and logical instructions, a 7-bit operation code (gh) is followed by three 3-bit register designators. The first field, i, designates the result register. The j and k fields designate the two operand registers or are combined to designate a B or T register.
+The shift and mask instructions consist of a 7-bit operation code (gh) followed by a 3-bit i field and a 6bit jk field. The i field designates the operand register. The jk combined field specifies a shift or mask count.
+Immediate operand, read and store memory, and branch instructions require the two-parcel instruction word format. The immediate operand and the read and store memory instructions combine the j, k, and m fields to define a 22-bit quantity or memory address. In addition, the read and store memory instructions use the h field to specify an operating register for indexing. The branch instructions combine the i, j, k, and m fields into a 24-bit memory address field. This allows branching to any one of the four parcel positions in any 64-bit word, whether in memory or in an instruction buffer.
+Operating Registers Five types of registers-three primary (A, S, and
+V) and two intermediate (B and T)-are provided in the CRAY-1.
+A registers-eight 24-bit A registers serve a variety
+of applications. They are primarily used as address registers for memory references and as index registers, but also are used to provide values for shift counts, loop control, and channel i/o operations. In address applications, they are used to index the base address for scalar memory references and for providing both a base address and an index address for vector memory references.
+The 24-bit integer functional units modify values
+
+Communications of
+the ACM
+
+January 1978 Volume 21
+Number 1
+
+(such as program addresses) by adding, subtracting, and multiplying A register quantities. The results of these operations are returned to A registers.
+Data can be transferred directly from memory to A registers or can be placed in B registers as an intermediate step. This allows buffering of the data between A registers and memory. Data can also be transferred between A and S registers and from an A register to the vector length registers. The eight A registers are individually designated by the symbols A0, A1, A2, A3, A4, A5, A6, and A7.
+B registers--there are sixty-four 24-bit B registers,
+which are used as auxiliary storage for the A registers. The transfer of an operand between an A and a B register requires only one clock period. Typically, B registers contain addresses and counters that are referenced over a longer period than would permit their being retained in A registers. A block of data in B registers may be transferred to or from memory at the rate of one clock period per register. Thus, it is feasible to store the contents of these registers in memory prior to calling a subroutine requiring their use. The sixty-four B registers are individually designated by the symbols B0, B1, B2 ..... and B778.
+S registers - e i g h t 64-bit S registers are the principle
+data handling registers for scalar operations. The S registers serve as both source and destination registers for scalar arithmetic and logical instructions. Scalar quantities involved in vector operations are held in S registers. Logical, shift, fixed-point, and floating-point operations may be performed on S register data. The eight S registers are individually designated by the symbols SO, S1, $2, $3, $4, $5, $6, and $7.
+T registers -sixty-four 64-bit T registers are used as
+auxiliary storage for the S registers. The transfer of an operand between S and T registers requires one clock period. Typically, T registers contain operands that are referenced over a longer period than would permit their being retained in S registers. T registers allow intermediate results of complex computations to be held in intermediate access storage rather than in memory. A block of data in T registers may be transferred to or from memory at the rate of one word per clock period. The sixty-four T registers are individually designated by the symbols TO, T1, T2 . . . . . and T778.
+V registers-eight 64-element V registers provide
+operands to and receive results from the functional units at a one clock period rate. Each element of a V register holds a 64-bit quantity. When associated data is grouped into successive elements of a V register, the register may be considered to contain a vector. Examples of vector quantities are rows and columns of a matrix, or similarly related elements of a table. Computational efficiency is achieved by processing each element of the vector identically. Vector merge and test instructions are provided in the CRAY-1 to allow operations to be performed on individual elements designated by the content of the vector mask (VM)
+68
+
+register. The number of vector register elements to be processed is contained in the vector length (VL) register. The eight V registers are individually designated by the symbols V0, V1, V2, V3, V4, V5, B6, and V7.
+
+Supporting Registers
+The CPU contains a variety of additional registers that support the control of program execution. These are the vector length (VL) and vector mask (VM) registers, the program counter (P), the base address (BA) and limit address (LA) registers, the exchange address (XA) register, the flag (F) register, and the mode (M) register.
+VL register-the 64-bit vector mask (VM) register
+controls vector element designation in vector merge and test instructions. Each bit of the VM register corresponds to a vector register element. In the vector test instruction, the VM register content is defined by testing each element of a V register for a specific condition.
+P register-the 24-bit P register specifies the mem-
+ory register parcel address of the current program instruction. The high order 22 bits specify a memory address and the low order two bits indicate a parcel number. This parcel address is advanced by one as each instruction parcel in a nonbranching sequence is executed and is replaced whenever program branching occurs.
+BA registers- the 18-bit base address (BA) register
+contains the upper 18 bits of a 22-bit memory address. The lower four bits of this address are considered zeros. Just prior to initial or continued execution of a program, a process known as the "exchange sequence" stores into the BA register the upper 18 bits of the lowest memory address to be referenced during program execution. As the program executes, the address portion of each instruction referencing memory has its content added to that of the BA register. The sum then serves as the absolute address used for the memory reference and ensures that memory addresses lower than the contents of the BA register are not accessed. Programs must, therefore, have all instructions referencing memory do so with their address portions containing relative addresses. This process supports program loading and memory protection operations and does not, in producing an absolute address, affect the content of the instruction buffer, BA, or memory.
+LA register--the 18-bit limit address (LA) register
+contains the upper 18 bits of a 22-bit memory address. The lower 4 bits of this address are considered zeros. Just prior to initial or continued execution of a program, the "exchange sequence" process stores into the LA register the upper 18 bits of that absolute address one greater than allowed to be referenced by the program. When program execution begins, each instruction referencing a memory location has the absolute address for that reference (determined by summing its address portion with the BA register contents) checked against the LA register content. If the absolute
+
+Communications of the ACM
+
+January 1978 Volume 21 Number 1
+
+address equals or exceeds the LA register content, an out-of-range error condition is flagged and program execution terminates. This process supports the memory protection operation.
+X A register ~ the 8-bit exchange address (XA) register contains the upper eight bits of a 12-bit memory address. The lower four bits of the address are considered zeros. Because only twelve bits are used, with the lower four bits always being zeros, exchange addresses can reference only every 16th memory address beginning with address 0000 and concluding with address 4080. Each of these addresses designates the first word of a 16-word set. Thus, 256 sets (of 16 memory words each) can be specified. Prior to initiation or continuation of a program's execution, the XA register contains the first memory address of a particular 16word set or exchange package. The exchange package contains certain operating and support registers' contents as required for operations following an interrupt. The XA register supports the exchange sequence operation and the contents of XA are stored in an exchange package whenever an exchange sequence occurs.
+F register-the 9-bit F register contains flags that, whenever set, indicate interrupt conditions causing initiation of an exchange sequence. The interrupt conditions are: normal exit, error exit, i/o interrupt, uncorrected memory error, program range error, operand range error, floating-point overflow, real-time clock interrupt, and console interrupt.
+M register-the M (mode) register is a three-bit register that contains part of the exchange package for a currently active program. The three bits are selectively set during an exchange sequence. Bit 37, the floating-point error mode flag, can be set or cleared during the execution interval for a program through use of the 0021 and 0022 instructions. The other two bits (bits 38 and 39) are not altered during the execution interval for the exchange package and can only be altered when the exchange package is inactive in storage. Bits are assigned as follows in word two of the exchange package.
+Bit 37-Floating-point error mode flag. When this bit is set, interrupts on floating-point errors are enabled.
+Bit 38-Uncorrectable memory error mode flag. When this bit is set, interrupts on uncorrectable memory parity errors are enabled.
+Bit 3 9 - M o n i t o r mode flag. When this bit is set, all interrupts other than parity errors are inhibited.
+Integer Arithmetic
+All integer arithmetic is performed in 24-bit or 64bit 2's complement form.
+Floating-Point Arithmetic
+Floating-point numbers are represented in signed magnitude form. The format is a packed signed binary
+69
+
+fraction and a biased binary integer exponent. The fraction is a 49-bit signed magnitude value. The exponent is 15-bit biased. The unbiased exponent range is:
+2-2°°°°s to 2 +177778, or approximately
+10 -25o0 to 10 +25o0
+
+An exponent equal to or greater than 2 +2°°°°8 is recognized by the floating-point functional units as an overflow condition, and causes an interrupt if floating point interrupts are enabled.
+Chaining
+The chaining technique takes advantage of the parallel operation of functional units. Parallel vector operations may be processed in two ways: (a) using different functional units and V registers, and (b) chaining; that is, using the result stream to one vector register simultaneously as the operand set for another operation in a different functional unit.
+Parallel operations on vectors allow the generation of two or more results per clock period. A vector operation either uses two vector registers as sources of operands or uses one scalar register and one vector register as sources of operands. Vectors exceeding 64 elements are processed in 64-element segments.
+Basically, chaining is a phenomenon that occurs when results issuing from one functional unit (at a rate of one/clock period) are immediately fed into another functional unit and so on. In other words, intermediate results do not have to be stored to memory and can be used even before the vector operation that created them runs to completion.
+Chaining has been compared to the technique of "data forwarding" used in the IBM 360/195. Like data forwarding, chaining takes place automatically. Data forwarding consists of hardware facilities within the 195 floating-point processor communicating automatically by transferring "name tags," or internal codes between themselves [6]. Unlike the CRAY-1, the user has no access to the 195's data-forwarding buffers. And, of course, the 195 can only forward scalar values, not entire vectors.
+Interrupts and Exchange Sequence
+Interrupts are handled cleanly by the CRAY-1 hardware. Instruction issue is terminated by the hardware upon detection of an interrupt condition. All memory bank activity is allowed to complete as are any vector instructions that are in execution, and then an exchange sequence is activated. The Cray Operating System (cos) is always one partner of any exchange sequence. The cause of an interrupt is analyzed during an exchange sequence and all interrupts are processed until none remain.
+Only the address and scalar registers are maintained in a program's exchange package (Fig. 6). The user's B, T, and V registers are saved by the operating system in the user's Job Table Area.
+
+Communications of
+the ACM
+
+January 1978 Volume 21
+Number 1
+
+Fig. 6. Exchange package.
+
+0 2
+
+10 12 16 18
+
+2h
+
+31 36 ~0
+
+63
+
+n E l s IH.L ,
+
+'
+
+AO
+
+n,,
+
+eA ~
+
+8A
+
+AI
+
+°.,
+
+LA
+
+l.
+
+A2
+
+.+,
+
+- Iv<l,
+
+a$
+
+...
+
+A4
+
+..,
+
+A5
+
+n. "///////////////////////////////////Px
+
+Aa
+
+A?
+
+n.,
+
+n+e
+
+SO
+
+SI he9
+
+n+lo
+
+$2
+
+n~,ll
+
+S3
+
+n+12
+
+S4
+
+I1÷ 13
+
+S5
+
+n~14
+
+S6
+
+n+15
+
+S?
+
+M - Modes+ 36 Interrupt on correctable
+memory error 37 Interrupt on floating point 38 Interrupt on uncorrectable
+memory error 39 Monitor mode
+F - Flags+
+31 Console interrupt 32 RTC interrupt 33 Floating point error 34 Operand range 35 Program range 36 Memoryerror 37 I/O interrupt 38 Error exit 39 Normal e x i t
+
+Registers S Syndrome bits RAB Read address f o r error
+(where B is bank) P Programaddress BA Base address LA Limit address
+XA Exchangeaddress VL Vector length
+E - Error type (bits 0,1) 10 Uncorrectable memory Ol Correctable memory
+R - Readmode (bits 10,11) O0 Scalar 01 I/O I0 Vector 11 Fetch
+
+i B i t position from l e f t of word
+
+The CRAY-I's exchange sequence will be familiar to those who have had experience with the CDC 7600 and Cyber machines. One major benefit of the exchange sequence is the ease with which user jobs can be relocated in memory by the operating system. On the CRAY-1, dynamic relocation of a user job is facilitated by a base register that is transparent to the user.
+
+Evolution of the CRAY-1 The CRAY-1 stems from a highly successful line of
+computers which S. Cray either designed or was associated with. Mr. Cray was one of the founders of Control Data Corporation. While at CDC, Mr. Cray was the principal architect of the CDC 1604, 6600, and 7600 computer systems. While there are many similarities with these earlier machines, two things stand out about the CRAY-1; first it is a vector machine, secondly, it utilizes semiconductor memories and integrated circuits rather than magnetic cores and discrete components. We classify the CRAY-1 as a second generation vector processor. The CDC STAR 100A and the Texas Instruments ASC are first-generation vector processors.
+70
+
+Both the STAR 100 and the ASC are designed to handle long vectors. Because of the startup time associated with data streaming, vector length is of critical importance. Vectors have to be long if the STAR 100 and the ASC vector processors are to be at all competitive with a scalar processor [3]. Another disadvantage of the STAR 100 architecture is that elements of a "vector" are required to be in consecutive addresses.
+In contrast with these earlier designs, the CRAY-1 can be termed a short vector machine. Whereas the others require vector lengths of a 100 or more to be competitive with scalar processors, the cross-over point between choosing scalar rather than vector mode on the CRAY-1 is between 2 and 4 elements. This is demonstrated by a comparison of scalar/vector timings for some mathematical library routines shown in Figure 1 [7].
+Also, the CRAY-I's addressing scheme allows complete flexibility. When accessing a vector, the user simply specifies the starting location and an increment. Arrays can be accessed by column, row, or diagonal; they can be stepped through with nonunary increments; and, there are no restrictions on addressing, except that the increment must be a constant.
+
+Vector Star+up Times To be efficient at processing short vectors, vector
+startup times must be small. On the CRAY-1, vector instructions may issue at a rate of one instruction parcel per clock period. All vector instructions are one parcel instructions (parcel size = 16 bits). Vector instructions place a reservation on whichever functional unit they use, including memory, and on the input operand registers. In some cases, issue of a vector instruction may be delayed by a time (in clock periods) equal to vector length of the preceding vector operation +4.
+Functional unit times are shown in Table II. Vector operations that depend on the result of a previous vector operation can usually "chain" with them and are delayed for a maximum "chain slot" time in clock periods of functional unit time + 2.
+Once issued, a vector instruction produces its first result after a delay in clock periods equal to functional unit time. Subsequent results continue to be produced at a rate of 1 per clock period. Results must be stored in a vector register. A separate instruction is required to store the final result vector to memory. Vector register capacity is 64-elements. Vectors longer than 64 are processed in 64-element segments.
+Some sample timings for both scalar and vector are shown in Table III [8]. Note that there is no vector ASIN routine and so a reference to ASIN within a vectorized loop generates repetitive calls to the scalar ASIN routine. This involves a p e r f o r m a n c e degradation but does allow the rest of the loop to vectorize (in a case where there are more statements than in this example). Simple loops 14, 15, and 16 show the
+
+Communications of the ACM
+
+January 1978 Volume 21 Number 1
+
+Table 111.
+
+Execution time in clock periods per result for various simple DO loops of the form
+DO 10 1 = 1.N I0 A(1) = B(1)
+
+Loop Body
+
+N = 1 10
+
+100
+
+1000
+
+1000 Scalar
+
+1. A ( I ) = 1. 2. A(1) = B(I) 3. A ( I ) = B(I) + 10. 4. A(I) = B(I) + C(I) 5. A(I) = B(/)*10. 6. A(I) = B(I)*C(I) 7. A(I) = B(I)/IO.
+8. A(I) = B(I)/C(I)
+9. A(1) = SIN(B(I)) 10. A(1) = A S I N ( B ( I ) ) 11. A ( I ) = A B S ( B ( I ) ) 12. A(1) = A M A X I ( B ( I ) , C(I))
+[C(I) = A(I))
+13. /A(/) = a(I)~ LB(/) = CClJ
+14. A ( I ) = B(I)*C(I) + D(I)*E(I) 15. A ( I ) = B(I)*C(I) + (D(I)*E(I)) 16. A ( I ) = B ( I ) ' C ( I ) + D(I)
+
+41.0 44.0 55.0 59.0 56.0 60.0 94.0 89.0 462.0 430.0 61.0 80.0
+90.0
+110.0 113.0 95.0
+
+5.5 5.8 6.9 8.2 7.0 8.3 10.8 13.3 61.0 209.5 7.5 11.2
+12'.7
+16.0 14.7 12.7
+
+2.6 2.7 2.9 3.9 2.9 4.0 4.1 7.6 33.3 189.5 2.9 5.2
+6.3
+7.7 6.6 5.5
+
+2.5 2.5 2.6 3.7 2.6 3.7 3.7 7.2 31.4 188.3 2.6 4.8
+518
+7.1 6.0 5.0
+
+22.5 31.0 37.0 41.0 38.0 42.0 52.0 60.0 198.1 169.1
+47.0
+57.0 63.0 52.0
+
+Fig. 7. Scalar/vectortiming.
+COST (CLOCKPERIODS/RESULT)
+3401t 3201[
+300 11
+2801[
+260"m 240~n 220"IU
+2001111
+180 4111
+160 " ~ 140, 120,
+
+680?' /
+
+-
+
+SCALAr'
+VECTOR~I
+
+;
+
+(
+
+o
+
+~
+
+L
+
+1
+
+10
+
+20
+
+30
+
+40
+
+cosALOG SQRT
+EXP
+
+~
+
+ACLOOSG
+
+SQRT
+
+EXP
+
+50
+
+60 64
+
+VECTOR LENGTH
+
+influence of chaining. For a long vector, the number of clock periods per result is approximately the number of memory references + 1. In loop 14, an extra clock period is consumed because the present cFr compiler will load all four operands before doing computation. This problem is overcome in loop 15 by helping the compiler with an extra set of parentheses.
+Software At the time of this writing, first releases of the
+CRAY Operating System (cos) and CRAY Fortran Compiler (cFr) have been delivered to user sites, cos is a batch operating system capable of supporting up to 63 jobs in a multiprogramming environment, cos is designed to be the recipient of job requests and data files from front-end computers. Output from jobs is normally staged back to the front-ends upon job completion.
+cFr is an optimizing Fortran compiler designed to compile ANSI 66 F o r t r a n IV to take best advantage o f the CRAY-I's vector processing architecture. In its present form, CFT will not a t t e m p t to vectorize certain
+71
+
+Fig. 8. Front-end system interface.
+PHASEMODULATEDLONGLINE i
+
+70Xt06bps
+
+64X106 bps
+
+90 METERS
+
+IBM 370/168 datar te • 24X10~bp$
+
+loops which, due to dependence conditions, appear at first sight, unvectorizable.
+However, future versions of cFr will be designed to eliminate as many dependency conditions as possible increasing the amount of vectorizable code. Basically, to be vectorizable, a DO loop should manipulate arrays and store the results of computations in arrays. Loops that contain branches such as GO TO's, IF's, or CALL statements are not currently vectorized. Loops may contain function references if the function is known to the compiler to have a vector version. Most of the mathematical functions in the CRAY library are vectorizable. By using the vector mask and vector merge features of the CRAY-1, future versions of the compiler will be able to vectorize loops containing IF and GO TO statements.
+Early experience with c~ has shown that most Fortran loops will not run as fast as optimally handcoded machine language equivalents. Future versions of c~ will show improved loop timings due mainly to improved instruction scheduling.
+Other CRAY-1 software includes Cray Assembler Language (CAL) which is a powerful macro assembler, an overlay loader, a full range of utilities including a text editor, and some debug aids.
+
+Front-End Computer Interface The CRAY-1 was not designed for stand-alone
+operation. At the very minimum a minicomputer is required to act as a conduit between the CRAY-1 and the everyday world. Cray Research software development is currently being done using a Data General Eclipse computer in this category. The Cray Research " A " processor, a 16-bit, 80 MIPS minicomputer is scheduled to replace the Eclipse in early 1978. Frontend computers can be attached to any of the CRAYl's 12 i/o channels.
+The physical connection between a front-end computer and the C R A y o l is shown in Figure 8. In this example an IBM 370/168 is assumed in the front-end role. Note that each computer requires a channel adapter between its own channel and a Cray Research phase-modulated long line. The link can only be driven at the speed of its slowest component. In this example it is the IBM block multiplexer channel speed of 3 megabytes/second. The discipline of the link is governed by the Cray Link Interface Protocol.
+
+Communications of the ACM
+
+January 1978 Volume 21 Number I
+
+CRAY-1 Development Problems Two of the most significant problems [9] encoun-
+tered on the way to the CRAY-1 were building the first cold bar and designing circuits with a completely balanced dynamic load.
+Building the Cold Bar It took a year and a half of trial and error before
+the first good cold bar was built. The work was done by a small Minnesota company. A major problem was the discovery, quite early, that aluminum castings are porous. If there is a crack in the stainless steel tubing at the bond between the tubing and the elbow then the Freon leaks through the aluminum casing. The loss of the Freon is not itself a problem, but mixed with the Freon is a little oil, and the oil can cause problems if it is deposited on the modules. Aluminum also tends to get bubbles in it when it is cast, requiring a long process of temperature cycling, preheating of the stainless steel tube, and so on.
+Designing the Circuits CRAY-1 modules are 6 inches wide. The distance
+across the board is about a nanosecond which is just about the edge time of the electrical signals. Unless due precautions are taken, when electric signals run around a board, standing waves can be induced in the ground plane. Part of the solution is to make all signal paths in the machine the same length. This is done by padding out paths with foil runs and integrated circuit packages. All told, between 10 and 20 per cent of the IC packages in the machine are there simply to pad out a signal line. The other part of the solution was to use only simple gates and make sure that both sides of every gate are always terminated. This means that there is no dynamic component presented to the power supply. This is the principal reason why simple gates are used in the CRAY-1. If a more complex integrated circuit package is used, it is impossible to terminate both sides of every gate. So all of the CRAY-I's circuits are perfectly balanced. Five layer boards have one ground layer, two voltage layers, and then the two logic layers on the outside. Twisted pairs which interconnect the modules are balanced and there are equal and opposite signals on both sides of the pairs. The final result is that there is just a purely resistive load to the power supply!
+
+fast as the CDC 7600. Such good scalar performance is required in what is often an unvectorizable world.
+At the time of this writing, Cray Research has shipped CRAY-1 systems to three customers (Los Alamos Scientific Laboratory, National Center for Atmospheric Research, and the European Center for Medium Range Weather Forecasts) and has contracts to supply three more systems, two to the Department of Defense, and one to United Computing Systems (UCS). Production plans already anticipate shipping one C R A Y - 1 per quarter. As the population o~ CRAY-1 computers expands, it will become clear that the CRAY-1 has made a significant step on the way to the general-purpose computers in the future.
+Received February 1977; revised September 1977
+Acknowledgments. Acknowledgments are due to
+my colleagues at Cray Research. G. Grenander, R. Hendrickson, M. Huber, C. Jewett, P. Johnson, A. La Bounty, and J. Robidoux, without whose contributions, this paper could not have been written.
+References 1. CRAY-1 Final Evaluation by T. W. Keller, LASL, LA6456-MS. 2. CRAY-1 Report, Auerbach Computer Technology Report, Auerbach Publisher's, 6560 North Park Drive, Pennsauken, N. J. 08109. 3. Preliminary Report on Results of Matrix Benchmarks on Vector Processors: Calahan, Joy, Orbits, System Engineering Laboratory, University of Michigan, Ann Arbor, Michigan 48109. 4. Computer Architecture Issues in Large-Scale Systems, 9th Asilomar Conference, Naval Postgraduate School, Monterey, California. 5. Computer World, August 1976. 6. The IBM 360/195 by Jesse O'Murphy and Robert M. Wade, Datamation, April 1970. 7. Work done by Paul Johnson, Cray Research. 8. Work done by Richard Hendrickson, Cray Research. 9. The section on CRAY-1 development problems is based on remarks made by Seymour Cray in a speech to prospective CRAY-1 users in 1975.
+
+Summary
+The design of the CRAY-1 stems from user experience with first generation vector processors and is to some extent, evolved from the 7600 [2]. The CRAY-1 is particularly effective at processing short vectors. Its architecture exhibits a balanced approach to both scalar and vector processing. In [1], the conclusion is drawn that the CRAY-1 in scalar mode is more than twice as
+72
+
+Communications of the ACM
+
+January 1978 Volume 21 Number 1
+

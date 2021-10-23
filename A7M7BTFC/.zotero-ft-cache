@@ -1,0 +1,85 @@
+V viewpoints
+
+doi:10.1145/1859204.1859216
+
+Mark Smotherman and Dag Spicer
+
+Historical Reflections
+
+IBM’s Single-Processor
+
+Supercomputer Efforts
+
+Insights on the pioneering IBM Stretch and ACS projects.
+
+I magine a CPU designed to issue and execute up to seven instructions per clock cycle, with a clock rate 10 times faster than the reigning supercomputer. Imagine a design team of top experts in computer architecture, compilers, and computer engineering—including two future ACM A.M. Turing Award recipients, five future IBM Fellows, and five future National Academy of Engineering members. Imagine that this team explored advanced computer architecture ideas ranging from clustered microarchitecture to simultaneous multithreading.
+Is this a description of the latest microprocessor or mainframe? No, this is the ACS-1 supercomputer design from more than 40 years ago.
+In the 1950s and 1960s IBM undertook three major supercomputer projects: Stretch (1956–1961), the System/360 Model 90 series, and ACS (both 1961–1969). Each project produced significant advances in instruction-level parallelism, and each competed with supercomputers from other manufacturers: Univac LARC, Control Data Corporation (CDC) 6600, and CDC 6800/7600, respectively.
+Of the three projects, the Model 90 series (91, 95, and 195) was the most successful and remains the most well known today, in particular for its outof-order processing of floating-point operations. But over the past few years, new information about the other two efforts has surfaced, and many previously unseen documents are now phys-
+
+ically collected and available online at the Computer History Museum in Mountain View, CA. Stretch Many histories recount that Stretch began in 1954 with efforts by Steve Dunwell.2,11 Less known is that Gene Amdahl, designer of the IBM 704 scientific computer, was assigned to design Stretch.10 Stretch was targeted at the needs of the Livermore and Los Alamos nuclear weapons laboratories, such as calculations for hydrodynamics and neutron diffusion. Unlike the vacuumtube-based 704, which had identical machine and memory cycle times of 12 microseconds, the transistorized Stretch was expected to have a 100-nano-
+The IBM Stretch supercomputer.
+
+second machine cycle time and a twomicrosecond memory cycle time. In response to this logic/memory speed imbalance, Amdahl worked with John Backus to design an instruction lookahead scheme they called asynchronous non-sequential (ANS) control.10
+Both Amdahl and Dunwell participated in the sales pitch to Los Alamos in 1955. When Los Alamos contracted with IBM in 1956 to build Stretch, Dunwell was given control of the project and Amdahl left the company.
+Dunwell recruited several new graduates including Fred Brooks and John Cocke. Harwood Kolsky, a physicist at Los Alamos, joined the project in 1957. Cocke and Kolsky developed a simulator that guided design decisions, particular-
+
+28 communications of the acm | december 2010 | vol. 53 | no. 12
+
+IMAGE COURTESY OF IBM
+
+viewpoints
+
+ly the details of the look-ahead. In its final form, branches in Stretch that could not be pre-executed were predicted, and instructions on the predicted path were speculatively executed—an astounding innovation for the late 1950s.a
+Stretch pioneered the use of transistor technology within IBM, and the circuitry and memory modules designed for Stretch were used to bring the 7000-series of computers to market much earlier than would have been otherwise possible. Stretch pioneered many of the ideas that would later define the System/360 architecture including the 8-bit byte, a generalized interrupt system, memory protection for a multiprogrammed operating system, and standardized I/O interfaces.3,4
+Stretch became the IBM 7030. A total of nine were built, including one as part of a special-purpose computer developed for NSA, codenamed Harvest. However Stretch did not live up to its initial performance goal of 60 to 100 times the performance of the 704, and IBM Chairman Tom Watson, Jr. announced a discount in proportion to this reduced performance and withdrew the 7030 from the market. Stretch was considered a commercial failure, and Dunwell was sent into internal exile at IBM for not alerting management to the developing performance problems. A number of years later, once Stretch’s contributions were more apparent, Dunwell was recognized for his efforts and made an IBM Fellow.
+Despite the failure, Kolsky and others urged management to continue work on high-end processors. Although Watson’s enthusiasm was limited, he approved two projects named “X” and “Y” with goals of 10-to-20 and 100 times faster than Stretch, respectively.
+Project X Facing competition from the announcement of the CDC 6600 in 1963, Project
+
+Although only one of these three projects was a commercial success, each significantly contributed to the computer industry.
+X quickly evolved into the successful Model 90 series of the System/360.6 Seventeen Model 91s and 95s were built. CDC sales and profits were impacted, and CDC sued IBM in December 1968 alleging unfair competition. The U.S. Department of Justice filed a similar antitrust suit against IBM one month later. CDC and IBM settled in 1973, and the government’s antitrust action was dropped in 1982.
+Project Y Project Y was led by Jack Bertram at IBM Research beginning in 1963. Bertram recruited Cocke, along with Fran Allen, Brian Randell, and Herb Schorr. Cocke proposed decoding multiple instructions per cycle to achieve an average execution rate of 1.5 instructions per cycle.9 Cocke said this goal was a reaction to Amdahl, who after returning to IBM had postulated an upper limit of one instruction decode per cycle.8
+In 1965, responding to the announcement of the CDC 6800 (later to become the 7600) and to Seymour Cray’s success with a small isolated design team for the 6600, Watson expanded Project Y and relocated it to California near the company’s San Jose disk facility. It was now called ACS (Advanced Computer Systems). The target customers were the same as for Stretch.
+
+a The look-ahead supported recovery actions to handle branch mispredictions and provided for precise interrupts. Also, as in many current-day processors, complex instructions were broken into simpler parts (“elementalized” in Stretch terminology), with each part assigned a different look-ahead entry. However, this complexity was blamed for part of Stretch’s performance problems, and speculative execution was not attempted in IBM mainframes until some 25 years later.
+
+ACS-1 Amdahl was made an IBM Fellow in 1965, and Bob Evans encouraged him to informally oversee ACS. Although Amdahl argued strongly for System/360 compatibility, Schorr and other architects designed the ACS-1 around more robust floating-point formats of 48-bit single-precision and 96-bit double-
+
+Calendar of Events
+December 15–18 SIGGRAPH Asia 2010, Seoul, Republic of Korea, Contact: Hyeongseok Ko, Email: ko@graphics.snu.ac.kr
+December 17–18 First ACM Annual Symposium on Computing for Development, London, United Kingdom, Contact: Andy Dearden, Email: a.m.dearden@shu.ac.uk
+December 21–23 International Conference on Frontiers of Information Technology Islamabad, Pakistan, Contact: Muhammad Sarfaz, Email: prof.sarfaz@gmail.com
+January 4–8 The Third International Conference on Communication Systems and Networks, Bangalore, India, Contact: David B. Johnson, Email: dbj@cs.rice.edu
+January 5–8 Foundations of Genetic Algorithms XI, Schwarzenberg, Austria, Sponsored: SIGEVO, Contact: Hans-Georg Beyer, Email: hans-georg.beyer@fhy.at
+January 17–20 The Thirteenth Australiasian Computing Education Conference, Perth QLD Australia, Contact: Michael de Raadt, Email: deraadt@usq.edu.au
+January 22–26 Fifth International Conference on Tangible, Embedded, and Embodied Interaction, Funchal, Portugal, Contact: Mark D. Gross, Email: mdgross@cmu.edu
+January 23–29 The 38th Annual ACM SIGPLANSIGACT Symposium on Principles of Programming Languages, Austin, TX, Sponsored: SIGPLAN, Contact: Thomas J. Ball, Email: tball@microsoft.com
+
+december 2010 | vol. 53 | no. 12 | communications of the acm 29
+
+viewpoints
+
+precision as well as a much larger register set than System/360.7 Amdahl was subsequently excluded and thereafter worked on his own competing design.
+Average access time to memory in ACS-1 was reduced by using cache memory.b A new instruction prefetch scheme was designed by Ed Sussenguth. Pipeline disruption from branches was minimized by using multiple condition codes along with prepare-tobranch and predication schemes created by Cocke and Sussenguth. Compiler optimizations were viewed as critical to achieving high performance, and Allen and Cocke made significant contributions to program analysis and optimization.1
+As for Stretch, detailed simulation was critical. Developed by Don Rozenberg and Lynn Conway, the simulator was used for documentation as well as validation and improvement of the design. While working through the simulation logic for multiple instruction decode and issue, Conway invented a general method to issue multiple outof-order instructions per machine cycle that used an instruction queue to hold pending instructions. Named “Dynamic Instruction Scheduling,”9 the scheme met the timing constraints and was quickly adopted.
+Also like Stretch, advanced circuit technology was key to the performance goals. New circuits were developed with switching times in the nanosecond range, and new circuit packaging and cooling approaches were investigated.
+In 1968, based on Amdahl’s cost/ performance arguments for his own design and the increasing cost projections for unique ACS-1 software, management decided to make ACS System/360 compatible and appointed Amdahl as director. The next year the project was canceled when Amdahl pushed for three different ACS-360 models. Instead, the cache-enhanced Model 195 was announced, and approximately 20 were built.
+After ACS Although the project fizzled, Silicon Valley benefited from the collection of talent assembled for the ACS project.
+b Cache memory was a new concept at the time; the IBM S/360 Model 85 in 1969 was IBM’s first commercial computer system to use cache.
+
+Amdahl stayed in California and began his own company, with two dozen former ACS engineers joining him to build the Amdahl 470. Other ACS project members moved to IBM’s San Jose disk drive facility or joined other companies in the Valley.
+Cocke went back to the East coast, staying with IBM, and he later expressed regret that very little of the ACS-1 design was ever published.5 Indeed, had the ACS-1 been built, its seven-issue, out-oforder design would have been the preeminent example of instruction-level parallelism. Instead, the combination of multiple instruction issue and out-oforder issue would not be implemented until 20 years later.
+In discussing supercomputers in his autobiography, Watson blamed the “erratic” IBM efforts partly on his own “temper,” and said he had come to view IBM’s competition with CDC like General Motors’ competition with Ferrari for building a high-performance sports car.12
+In the 1970s the supercomputer industry pursued vector processing, with CDC building the unsuccessful STAR100 in 1974 and Cray Research building the very successful Cray-1 in 1976. IBM announced a vector add-on for its mainframes in 1985, but the extension did not sell well. IBM funded Supercomputer Systems Incorporated between 1988 and 1993, but SSI went bankrupt before delivering its multiprocessor computer. More recently IBM built a number of successful large clusters, including Blue Gene and Roadrunner. In the June 2010 “Top500” Supercomputer list, four of the top 10 supercomputers in the world were built by IBM.
+Impact Although only one of these three projects was a commercial success, each significantly contributed to the computer industry. Fred Brooks has described the impact Stretch had on IBM, and especially on the System/360 architecture.3 The Model 90 series influenced high-performance CPU design across the industry for decades. The impact of ACS was more indirect, through people such as Fran Allen, Gene Amdahl, John Cocke, Lynn Conway, and others. For example, Amdahl was able to recruit ACS engineers Bob Beall, Fred Buelow, and John Zasio to further develop high-speed
+
+ECL circuits and packaging for the Amdahl 470. Allen and Cocke disseminated their work on program optimization, and Cocke carried the idea of designing a computer in tandem with its compiler into later projects, one of which was the IBM 801 RISC. Conway went on to coauthor a seminal book on VLSI design and attributes much of her insight into design processes to her ACS experience.
+Historical Collections The Computer History Museum collection contains more than 900 Stretch and ACS-related documents donated by Harwood Kolsky, and many of these are online at http://www.computerhistory.org/collections/ibmstretch/. These documents shed light on contributions to Stretch and ACS by Amdahl, Cocke, and others, as well as recording the design trade-offs made during the Stretch project and the studies made of Stretch performance problems. The Museum has several oral history interviews online at http://www.computerhistory.org/ collections/oralhistories/ and has made recent talks available on its YouTube channel at http://www.youtube.com/ user/ComputerHistory/. The Museum also features a new exhibit, part of which focuses exclusively on supercomputers, including the CDC 6600 and Cray-1.
+References 1.	Allen, F. The history of language processor technology
+in IBM. IBM Journal of Research and Development 25, 5 (Sept. 1981). 2.	Bashe, C. et al. IBM’s Early Computers. MIT Press, Cambridge, MA, 1986. 3.	Brooks, F., Jr. Stretch-ing is great exercise—It gets you in shape to win. IEEE Annals of the History of Computing 32, 1 (Jan. 2010). 4.	Buchholz, W. Planning a Computer System: Project Stretch. McGraw-Hill, Inc., Hightstown, NJ, 1962. 5. Cocke, J. The search for performance in scientific processors. Commun. ACM 31, 3 (Mar. 1988). 6.	Pugh, E., Johnson, L. and Palmer, J. IBM’s 360 and Early 370 Systems. MIT Press, Cambridge, MA, 1991. 7. Schorr, H. Design principles for a high-performance system. In Proceedings of the Symposium on Computers and Automata (New York, April 1971). 8. Shriver, B. and Capek, P. Just curious: An interview with John Cocke. IEEE Computer 32, 11 (Nov. 1999). 9. Smotherman, M. IBM Advanced Computing Systems (ACS); http://www.cs.clemson.edu/~mark/acs.html. 10. Smotherman, M. IBM Stretch (7030)—Aggressive Uniprocessor Parallelism; http://www.cs.clemson. edu/~mark/stretch.html. 11. Spicer, D. It’s not easy being green (or “red”): The IBM stretch project. Dr. Dobb’s Journal, July 21, 2001. 12. Watson, Jr., T. and Petre, P. Father Son & Co. Bantam, NY, 1990, 384.
+Mark Smotherman (mark@cs.clemson.edu) is an associate professor in the School of Computing at Clemson University, SC.
+Dag Spicer (spicer@computerhistory.org) is Senior Curator at the Computer History Museum in Mountain View, CA.
+Copyright held by author.
+
+30 communications of the acm | december 2010 | vol. 53 | no. 12
+

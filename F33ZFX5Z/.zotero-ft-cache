@@ -1,0 +1,2652 @@
+G. M. Amdahl G. A. Blaauw
+F. P. Brooks, Jr.,
+
+Architecture of the IBM System/ 360
+Abstract: The architecture* of the newly announced IBM System/360features four innovations:
+1. An approach to storage which permits and exploits very large capacities,hierarchies of speeds, readonly storage for microprogram control, flexible storage protection, andsimple program relocation.
+2. An input/output system offering new degrees of concurrentoperation,compatiblechanneloperation, data rates approaching 5,000,000 characters/second, integrated design of hardware and software, a new low-cost, multiple-channel package sharing main-frame hardware, new provisions for devicestatus information, and a standard channel interface between central processing unit and input/output devices.
+3. A truly general-purpose machine organization offering new supervisory facilities, powerful logical processingoperations, and a wide variety of data formats.
+4. Strict upward and downward machine-language compatibility over a line of six models having a performance range factor of 50.
+This paper discusses in detail the objectives of the design and the rationale for the main features of the architecture. Emphasis is given to the problems raised by the need for compatibility among central processing units of various size and by the conflicting demands of commercial, scientific, real-time, and logical information processing. A tabular summary of the architectureis shown in the Appendices.
+
+Introduction
+
+The design philosophies of the new general-purpose ma-
+
+Thesection that followsdescribes the objectives of
+
+chine organization for the IBM System/360 are discussed the new system design, i.e., that it serve as a base for new
+
+in this paper.? In addition to showing the architecture* technologies and applications, that it be general-purpose,
+
+of the new family of data processing systems,we point out efficient, and strictly programcompatible in all models.
+
+the various engineering problems encounteredin attempts The remainder of the paper is devoted to the design
+
+to make the system designcompatible, at the program bit problems faced, the alternatives considered, and the deci-
+
+level, for large and small models. The compatibility was
+
+sions made for data format, data and instruction codes,
+
+to extend not only to models of any size but also to their storage assignments, and input/output controls.
+
+various applications-scientific, commercial, real-timea, nd so on.
+
+Design objectives
+
+The new architecture builds upon but differs from the de-
+
+The term architecture is used here to describe the attributes of a system as seen by the programmer, i.e., the conceptual structure and
+
+signsthat have graduallyevolved since1950. The evolution
+
+functimal behavior, as distinct from the organization of the data flow and controls, the logical design, and the physical implementation.
+
+of the computer had included, besides major technological
+
+iAdditional details concerning the architecture, engineering design,
+
+improvements,several important systemsconcepts and
+
+programming, and application of the IBM System/360 will appear in a
+
+series of articles in the I B M Systems Journal.
+
+developments :
+
+87
+
+IBM JOURNAL APRIL 1964
+
+1. Adaptation to business data processing.
+
+5. The input/output channel and the input/output control
+
+2. Growing importance of the total system, especially the
+
+program had to be designed for each other.
+
+input/output aspects.
+
+6. Machinesystems had to be capable of supervising
+
+3. Universaluse of assemblyprograms,compilers, and other metaprograms.
+
+themselves,withoutmanualintervention, for both realtime and multiprogrammed, or time-shared, applications. To realize this capability requires: a comprehensive inter-
+
+4. Development of magnetic recording on tapes, drums,
+
+ruption system, tamper-proof storage protection, a pro-
+
+and disks.
+
+tected supervisor program, supervisor-controlled program
+
+5. Hundred-fold expansion of storage capacities.
+
+switching, supervisor control of all input/output (including unit assignment), nonstop operation (no HALT), easy
+
+6. Adaptation for real-time systems.
+
+programrelocation,simplewriting of read-only or un-
+
+During this period most new computer models, from
+
+modified programs, a timer, and interpretive consoles.
+
+the point of view of their logical structure, were improved, 7. It mustbepossible and straightforward to assemble
+
+enlarged, or technologically recast versionosf the machines systems with redundant I/O, storages, and CPU’s so that
+
+developed in the early 1950’s. IBM products are not the system can operate when modules fail.
+
+atypical; the evolution has gone from IBM701 to 7094, 650 to 7074, from 702 to 7080, and from 1401to 7010.
+The systemcharacteristics to bedescribedhere,how-
+
+8. Storage capacitiesof more than the commonly available 32,000 words would be required.
+
+ever, are a new approach to logical structure and function, 9. Certain types of problems require floating-point word
+
+designed for the needs of the next decadeas a coordinated length of more than 36 bits.
+
+set of data processing systems.
+
+10A.s CPU’s becomiencreasinglryeliableb,uilt-in
+
+Advanced concepts It wasrecognized from the start that the design had to
+
+thorough checkingagainsthardwaremalfunction is imperative for all systems, regardlessof application.
+
+embody recent conceptual advances, and hence, if neces-
+
+11.Since the largestservicingproblemisdiagnosisof
+
+sary, be incompatible with existing products.To this end, malfunctionb,uilt-inhardware
+
+fault-locating aids are
+
+the following premises were considered:
+
+essential to reducedown-times. Furthermore, identifka-
+
+tion of individual malfunctionsand of individual invalidi-
+
+1.Sincecomputersdevelop into families,anyproposed
+
+ties in program syntax would haveto be provided.
+
+design would haveto lend itselfto growth and to suacessor machines.
+
+Open-ended design
+
+The new design had to provide a dependable base for a
+
+2. Input/output (I/O) devices makesystemsspecifically
+
+decade of customer planning and customer programming,
+
+useful for given applications. A general methodwas needed and continuing laboratory developments, whether in tech-
+
+for using 1/0 devicesdiffering in data rate, access, and nology, application and programming techniques, system
+
+function.
+
+configuration, or special requirements.
+
+Thevarious circuit, storage, and input/output tech-
+
+3. The realvalue of an information system is properly nologies usedin a system changeat different times, causing
+
+measured by answers-per-month,not bits-per-microsecond. corresponding changes in their relative speeds and costs.
+
+The former criterion required specific advancesto increase To take advantage of these changes,it is desirablethat the
+
+throughput for a given internal speed, to shorten turn- designpermitasynchronous operation ofthesecompo-
+
+around time for a given throughput, and to make the nents with respectto each other.
+
+wholecomplexofmachines and programmingsystems
+
+Changing application and programmintgechniques
+
+easier to use.
+
+would require open-endednessin function. Current trends
+
+had to be extrapolated and their consequences anticipated.
+
+4. The functions of the central processing unit (CPU) This anticipation could be achieved by direct provision,
+
+proper are specific to its application only a minor fraction e.g., by increasingstorage capacities and by using multiple-
+
+of the time. The functions required by the system for its CPU systems,various new 1/0 devices, and time shar-
+
+own operation, e.g., compiling, input/output management, ing. Anticipation mightalso take the form of general-
+
+and the addressing of and within complex data structures, ization of function, as in code-independent scan and
+
+use a major share of time. These functionshad to be made translation facilities, or it might consist of judiciously re-
+
+efficient, and need not be different in machines designed
+
+servingspare bits, operation codes, and blocks ofoperation
+
+88
+
+for different applications.
+
+codes, for new modes, operations, or sets of operations.
+
+AMDAHL, BLAAUW AND BROOKS
+
+Changing requirements for system configuration would demand not only such approaches as a standard interface between 1/0 devices and control unit, but alsocapabilities for a machine to directly sense, control, and respond to other equipment modules via pathsoutside the normal data routes. These capabilities permit the construction of supersystems that can be dynamically reconfigured under programcontrol, to adapt more precisely to specialized functions or togive graceful degradation.
+In many particular applications, some special (and often minor) modification enhances the utility of the system. These modifications (RPQs), which may correct some shortsightedness of the original design, often embody operations not fully anticipated. In any event, a good general design would obviatecertain modifications and accommodate others.
+General-purpose function
+
+would easily perform such logical functions as code translation and message assembly, communications lines would be attached directly to the 1/0 channel via a control unit that would perform only character assembly and the electrical line-handling functions.
+Eficient performance
+The basic measure of a good design is high performance in comparison t o other designs having the same cost. This measure cannot be ignored in designing a compatible line. Hence each individual model and systems configuration in the line would have to be competitive with systems that are specialized in function, performance level or both. That this goal is feasible in spite of handicaps introduced by the compatibility requirement was due to the especially important cost savings that would be realized due to compatibility.
+
+The machine design would have to provide individual system configurations for large and small, separate and
+
+Intermodel compatibility
+
+mixed applications as found in commercial, scientific, real- The design had to yield a range of models with internal
+
+time, data-reduction, communications, language, and logi- performance varying from approximately that of the IBM
+
+cal data processing. The CPU design would have to be 1401 to well beyond that of the IBM 7030 (STRETCHA).s
+
+facile for each of these applications. Special facilities such already mentioned, all models would have to be strictly
+
+as decimal or floating-point arithmetic might be required program compatible, upward and downward, at the pro-
+
+only for one or anotherapplication class and would be gram bit level.
+
+offered as options,but they would have to be integral,
+
+The phrase “strictly programcompatible”requires a
+
+from the viewpoint of logical structure, with the design. more technically precise definition. Here it means that a
+
+In particular,the general-purpose objective dictated that: valid program, whose logic will not depend implicitly upon
+
+1. Logical power of great generality would have to be provided, so that all combinations of bits in data entities would be allowed and might be manipulated with operations whose power and utility depend upon the general nature of representations ratherthan uponany specific selection of them.
+
+time of execution and which runs upon configuration A, will also run on configuration B if the latter includes at least the required storage, at least the required 1/0 devices, and at least the required optional features. Invalid programs, i.e., those which violate the programming manual, are not constrained to yield the same results on all models. The manual identifies not only the results of
+
+2. Operations would have to be code-independent except, all dependable operations, but also those results of ex-
+
+of course, where code definition is essential to operation, ceptional and/or invalid operations that are not depend-
+
+as inarithmetic. In particular, all bit combinations should able. Programs dependent on execution-time will operate
+
+be acceptable as data; no combination should exert any compatibly if the dependence is explicit, and, for example,
+
+control function when it appears in a data stream.
+
+if completion of an 1 / 0 operation or the timer are tested.
+
+3. The individual bit would have to be separately manipulatable.
+
+Compatibility would ensure that the user’s expanding needs be easily accommodated by any model. Compatibility would also ensure maximum utility of programming
+
+4. The general addressing system would have to be able to refer to small units of bits, preferably the unit used for characters.
+
+support prepared by the manufacturer, maximum sharing of programs generated by the user, ability to use small systems to back up large ones, and exceptional freedom in configuring systems for particular applications.
+
+Further, theimplications of general-purpose CPU design
+
+It required a new concept and mode of thought to make
+
+for communications-oriented systems indicated a radical the compatibility objective even conceivable. In the last
+
+departure from current systems philosophy. The conven- few years, many computer architects had realized, usually
+
+tional CPU, for example, is augmented by an independent implicitly, that logical structure (as seen by the program-
+
+stored-program unit (such as the IBM 7750 or 7740) to mer) and physical structure (as seen by the engineer) are
+
+handle all communications functions. Since the new CPU quite different. Thus each may see registers, counters, etc.,
+
+89
+
+ARCHITECTURE OF THE 1[BM SYSTEM/360
+
+that to the other are not at all real entities. This was not so in the computers of the 1950’s. The explicit recognition of the duality of structure opened the way for the compatibilitywithinSystem/360. The compatibilityrequirement dictated that the basic architecture had to embrace different technologies, different storage-circuit spraeteidos, different data path widths, and different data-flow complexities. The basic machinestructure and implementation at the variousperformance levels are shown in Fig. 1.
+
+The design decisions Certain decisions for the architectural designbecame mileposts, because they (a) established prominent charac-
+teristics of the System/360,(b)resolvedproblems concerning the compatibility objective, thus illuminating the essential differencesbetweensmallmodels and large, or (c) resolved problems concerning the general-purpose objective, thus illuminating the essential differences among applications. The sections that followdiscussthesede-
+
+TYPE
+
+Figure l Machine structure and implementation.
+ADDRESSES
+
+I
+MODEL
+30 40 50 60 62 70
+
+CONTROL
+REAOONLYSTORE REAO ONLY STORE REAO ONLYSTORE REAO ONLYSTORE REAOONLYSTORE CONVENTIONALCIRCUITS
+
+CYCLE
+1.0 0.625 0.5 0.25
+
+INSTRUCTIONS
+INDEXEDADDRESSES 30
+
+I
+70
+
+STORAGE
+
+1 CAPAC8IT-BBYYITTWEISDBTITHS IK=1024
+
+EXCLUDINGPARITY
+
+8-64K
+-16 256 K
+32 - 256 K
+- 128 512 K - 256 512 K
+256 - 512 K
+I
+
+8 16 32 64 64 64
++
+
+-
+CYCLE
+- PS
+2.0 2.5 2.0 2.0 1.0
+- 1.0
+
+#t
+
+I 4 DATAFLOW
+
+DECLAIRYCUIBTITSWIDTH EXCLUDINGPARITY
+
+30
+
+a
+
+40
+
+8
+
+50
+
+32
+
+60
+
+64
+
+62
+
+64
+
+70
+
+64
+
+I
+PERLEVEL, ns 30 30 IO IO 5
+
+90
+
+AMDAHLB, LAAUWAND
+
+BROOKS
+
+GENREERGALISFTLEORASPTROIENINGGTISTERS
+
+I 1MODEL
+
+TYPE
+
+1 CYWBCIITLDSETH EXCLUPDAIRNIGTY
+
+MAINSTORE CORE ARRAY CORE ARRAY TRANSISTORREGISTERS
+64 64
+
+1 1ps
+-
+
+cisions, the problemsfaced, the alternativesconsidered,
+
+Good data were unavailable on the distribution of
+
+and the reasons for the outcome.
+
+required precision by the number of problems or running
+
+Data format
+
+time. Indeed, accurate measures could not be acquired on such coarse parameters as frequency of double-precision
+
+Thedecision on basic format (whichaffected character operation on 36-bit and 48-bitmachines. The question
+
+size, word size,instruction field, number of index registers, became whether to force all problems to the longer 48-bit
+
+input-output implementation, instruction set layout, stor- word, or whether to provide 64 to take care of precision-
+
+age capacity,character code, etc.)was whether data length sensitive problems adequately, and either 32 or 36 to give
+
+modulesshould go as 2" or 3.2"E. ven though many faster speed and better coding efficiencyfor the rest. The
+
+matters of format were considered in the basicchoice,
+
+choice was made for the IBM System/360 to have both
+
+we will for convenience treat the major components of
+
+64- and 32-bit length floating point. This choice offersthe
+
+the decision as if they were independent.
+
+user the option of making the speed/space vs precision
+
+Character size, 6 us 4/8. In character size, the funda- trade-off to best suit his requirementsT. he user of the large
+
+mental problem is that decimal digits require 4 bits, the models is expected to employ64-bitwordsmostof the
+
+alphanumeric characters require 6bits. Three obvious time. The user of the smaller models will find the 32-bit
+
+alternatives were considered - 6 bits for all, with 2 bits lengthadvantageous in most ofhiswork.Allfloating-
+
+wasted on numeric data; 4 bits for digits, 8 for alpha- point models have both lengths and operate identically.
+
+numeric, with 2 bits wasted on alphanumeric; and 4 bits
+
+Hexadecimalfloating-point radix. With no conflcts in
+
+for digits, 6 for alphanumeric,which would require adop- questions of large vs small machines, base 16 was selected
+
+tion of a12-bitmodule as the minimumaddressable
+
+for floating point. Studies by Sweeney' show that the fre-
+
+element. The 7-bit character, which incorporated a binary quency of pre-shift, overflow,and precision-loss post-shift
+
+recoding of decimal digit pairs, was also briefly examined. on floating-point addition are substantially reducedby this
+
+The 4/6 approach was rejected because (ai)t was desired choice. He has shownthat, compared with base2, the per-
+
+to have the versatility and power ofmanipulating character centage frequencyof occurrence of overflowis 5 versus 20,
+
+streams and addressingindividuacl haracters, evenin
+
+pre-shiftis43versus 58, and precision-losspost-shiftis
+
+models where decimal arithmetic is not used, (b) limiting
+
+11versus18. Thus speedisnoticeablyenhanced. Also,
+
+the alphabetic character to 6 bits seemed short-sighted, simpler shiftingpaths, with fewer logic levels, will accom-
+
+and (c) the engineeringcomplexities of this approach plish a higher proportion of all required pre-shifting in a
+
+might well cost morethan the wasted bitsin the character. single pass. For example, circuits shifting 0, 1, 2,3, or 4
+
+The straight-6 approach, used in the IBM 702-7080 and binaryplacescover82%of the base2pre-shifts.Sub-
+
+1401-7010 families, as well as in other manufacturers' stantiallysimplercircuitsshifting 0, 1, or 2hexadecimal
+
+systems,had the advantages of familiarusage,existing
+
+places cover 93% of all base 16 pre-shifts. This simplifica-
+
+1/0 equipment, simple specificationof field structure, and tion yieldshigherspeed for the largemodels and lower
+
+commensurability with a 48-bit floating-point word and a cost for the small ones.
+
+24-bit instruction field.
+
+The most substantial disadvantage of adopting base 16
+
+The 4/8 approach, usedin the IBM 650-7074 family is the shift in bit usage from exponent to fraction. Thus,
+
+and elsewhere, had greater coding efficiency, spare bits in for a given range and a given minimum precision, base 16
+
+the alphabetic set (allowing the set to grow), and commen- requires2 fewer exponent bits and 3more fraction bits
+
+surability with a 32/64-bit floating-point word and a 16- than does base 2. Alternatively and equivalently, rounding
+
+bit instruction field. Most important of these factors was and truncation effects are 8times as large for a given
+
+coding efficiency, which arises from the fact that the use fraction length. For the 64-bit length, this is no problem.
+
+of numeric data in business records is more than twice as For the 32-bit length, witihts 24-bit fraction, the minimum
+
+frequent as alphanumeric.This efficiencyimplies, for a precision is reduced to the equivalent of 21 bits. Because
+
+given hardware investment,betteruse of core storage, the 64-bitlength was available for problems where the
+
+faster tapes, and more capacious disks.
+
+minimumprecisioncramped the user, the greaterspeed
+
+Ffoating-poinwt orldength,
+
+48 us 32/64. For large and simplicity of base 16 was chosen.
+
+models addition time goes up slowlywithwordlength,
+
+Significance arithmetic. Many schemes yielding an esti-
+
+and multiplication time rises almostlinearly. For small, mate of the significanceofcomputedresultshavebeen
+
+serial models, addition time rises linearly and multiplica- proposed. One such scheme, a modified form of unnor-
+
+tion as the square of word length. Input/output time for malized arithmetic, was for atime incorporated in the
+
+data files rises linearly. Large machines moreoften require design. The scheme was finally discarded when simulation
+
+high precision; small machines more urgently reqsuhiorert runsshowed this mode of operation to cost about one
+
+operands. For this aspect of the basic format problem, hexadecimadl igiot f actual significancedeveloped, as
+
+then, definite conflicts arose because of compatibility.
+
+comparedwithnormalized operation. Furthermore, the
+
+91
+
+ARCHITECTURE OF THE IBM SYSTEM/360
+
+significanceestimateyielded for a given problemvaried
+
+length fields in storage; for example, it distinguishes IBM
+
+substantially withthe test data used.
+
+702-7080 arithmetic from that of the IBM 1401-7010
+
+Sign representations. For the fixed-point arithmetic family.
+
+system, which is binary,the two’s complement representa-
+
+The large models readily afford registers or local stores
+
+tion for negativenumbers was selected.Thewell-known
+
+and get a speedenhancement from usingthese as ac-
+
+virtues of this system are the uniquerepresentation
+
+cumulators. For the small model, using core storage for
+
+of zero and the absence of recomplementation.These
+
+logical registers, addition to an accumulator is no faster
+
+substantial advantages are augmented by several properties than addition to a programmer-specified location.Addition
+
+especially useful in address arithmetic, particularly in the of twoarbitrary operands and storage of the result becomes
+
+large models, where address arithmetic has its own hard- LOAD, ADD, STORE, however, and this operation is
+
+ware. With two’s complement notation, this indexing substantially slowerfor the small models than the MOVE,
+
+hardware requires no true/complement gates and thus ADD sequence appropriate to storage-storage operation.
+
+works faster. In the smaller, serial models, the fact that Business arithmetic operations (as hand coded and es-
+
+high-order bits of address arithmetic can be elided with-
+
+pecially as compiled from COBOL) often take this latter
+
+out changing the low-orderbits also permits a gainin
+
+form and rarelyoccur in strings where intermediate
+
+speed. The same truncation property simplifiesdouble-
+
+results are profitablyheld in accumulators. In address
+
+precision calculations. Furthermore, for table calculation, arithmetic and floating-point arithmetic, quite the opposite
+
+rounding or truncation to an integer changes all variables is true.
+
+in the same direction, thus giving a moreacceptable
+
+Field specification:word-marks versus length. Variable-
+
+distribution than doesanabsolute-value-plus-signrepre-
+
+length fields canbespecified in thedata via delimiter
+
+sentation.
+
+characters or word-marks, or in the instruction via specifi-
+
+The established commercial rounding convention made cation ef field length or start-finish limits. For business
+
+the useofcomplement notation awkwardfordecimal
+
+data, the word-mark has some slight advantagein storage
+
+data; therefore,absolute-value-plus-signisusedhere. In efficiency: one extra bit per 8-bit character would cost
+
+floating point, the engineering virtues of normalizing only less than 4 extra length bits per 16-bit address. Further-
+
+high-orderzeros, and of having all zerosrepresent the more, instructions, and henceaddresses,usuallyoccupy
+
+smallest possible number, decided the choice in favor of most core storage space in business computers. However,
+
+absolute-value-plus-sign.
+
+the word-mark approach implies the use of word-markson
+
+Variable- versus fixed-length decimal fields. Since the instructions, too, and here the cost iswithout compensating
+
+fields of business records vary substantiallyin length, cod- function. The same is true of all fixed-field data, an im-
+
+ing efficiency (and hence tape speed, file capacity, CPU portant considerationin a general-purposedesign. On
+
+speed, etc.) can be gained by operating directly on vari- balance, storage efficiency is about equal; the field speci-
+
+able-length fields. This is easy for serial-by-byte machines, fication was put in the instruction to allow all data combi-
+
+and the IBM 1401-7010 and 702-7080 families are among nations to bevalid and to giveeasier and more direct
+
+those so designed. A less flexible structure is more appro- programming,particularlysince it providesconvenient
+
+priate for a more parallel machine,and the IBM 650-7074 addressing of parts of fields. Length was chosen over limit
+
+familyisamong those designedwithfixed-word-length
+
+specification to simplify program relocation and instruc-
+
+decimal arithmetic.
+
+tion modification.
+
+As one would expect,the storage efficiency advantage of
+
+ASCZZus BCD codes. The selection of the 8-bit char-
+
+the variable data format is diminishedby the extra instruc- acter size in 1961proved wise by 1963, when the American
+
+tion information required for length specification. While
+
+Standards Association adopted a 7-bit standard character
+
+the fixed format is preferable for the larger machines, the code for information interchange(ASCII)T. his7-bit
+
+variable format was adopted because (a) the small com-
+
+code is now under final considerationby the International
+
+mercial users are numerous and only recently trained in Standards Organizationfor adoption as an interna-
+
+variable-formatconcepts, and (b) the largecommercial
+
+tional standards recommendation.Thequestionbecame
+
+system is usually1/0 limited; hence the internal perform- “Why not adopt ASCII as the only internal codefor
+
+ancedisadvantage of the variable format ismore than System/360?’
+
+compensated by the gain in effective tape rate.
+
+The reasonsagainstsuchexclusive adoption was the
+
+Decimal accumulators versus storage-storageoperation.
+
+widespread use of the BCD code derived from and easily
+
+A closely relatedquestioninvolvinglarge/smallmodels
+
+translated to the IBM card code. To facilitate use of both
+
+concerned the use of an accumulator as one of the oper- codes, the central processingunits are designedwith a
+
+ands on decimal arithmetic, versus the use of storage high degree of code independence, with generalized code
+
+locations for all operands and results. This issue is per- translation facilities, and with program-selectableBCD or
+
+92
+
+tinent even after a decision has been made for variable- ASCII modes for code-dependent instructions. Neverthe-
+
+AMDAHLB, LAAUW AND BROOKS
+
+Figure 2a Extended binary-coded-decimal (BCD)interchange code.
+
+00 01 10 11
+
+00 01 10 11
+
+1000 01
+
+11
+
+Figure 2b 8-bit representationofthe 7-bit American Standard Code for Information Interchange (ASCII).
+
+L 4321
+
+x5 00 0111 10
+
+OOOO NULL
+
+0001 SOM
+
+0010 EOA
+
+0011 €OM
+
+00 01 10 11
+
+00 01 10 1 1
+
+1000 01
+
+11
+
+0100 E Q T
+
+0101 WRU 0110 RU 0111 BELL 1000 BKSP 1001 HT 1010 LF 1011 VT 1100 FF 1101 CR
+1110 so
+1111 SI
+
+I
+
+1 -
+0-
+
+93
+
+ARCHITECTURE OF THE: IBM SYSTEM/360
+
+less, a choice had to be made for the code-sensitive 1/0 tions with explicit, but truncated, addresses which specify
+
+devices and for the programming support, and the solution only the fast registers.
+
+was to offer both codes, fully supported, as a user option. Systems with either option will, of course, easily read or write 1/0 media with the other code. The extended BCD interchange code and an 8-bit representation of the 7-bit ASCII are shown in Fig. 2.
+Boundary alignment. A majorcompatibilityproblem concerned alignmentof field boundaries. Different models were to havedifferentwidthsofstorage and data flow, and therefore each modehlad a different seot f preferences.
+
+4. In any practical implementation, the depth of the stack has a limit. The register housekeeping eliminated by the pushdown organization reappears as management of a finite-depth stack and as specificationof locations of submerged data for TOP’S and SWAP’S. Further, when part of a fullstack must be dumpedto make room for new data, it is the bottom part, notthe active part, which should be dumped.
+
+For the 8-bit wide model the characters might have been
+
+5. Subroutine transparency, i.e., the ability to use a sub-
+
+aligned on character boundaries,with no further constraints. In the 64-bit wide model it might have been pre-
+
+routine recursively, is one of the apparent advantages of the stack.However, the disadvantage is that the trans-
+
+ferred to have no fields splitbetweendifferent64-bit
+
+parency does not materialize unless additional independ-
+
+double-words. The general rule adopted (Fig. 3) was that
+
+ent stacks are introduced for addressing purposes.
+
+each fixed field must begin at a multipleof its field length, and variable-length decimaal nd character fields are unconstrained and are processedserially in allmodelsA. ll
+
+6. Fitting variable-length fieldsinto a fixed-width stack is awkward.
+
+models mustinsure that programmers will adhere to these
+
+In the final analysis,the stack organization would have
+
+rules.Thispolicing is essential to prevent the useof
+
+been about break-even for a system intended principalflyor
+
+technically invalid programs that might work beautifully
+
+scientificcomputing. Here the general-purposeobjective
+
+on small models but not on large ones. Such an outcome weighed heavily in favor of the more flexible addressed-
+
+would undermine compatibility. The general rule, which
+
+register organization.
+
+has very few and very minor exceptions, isthat invalidities
+
+Full us truncated addresses. From the beginning, the
+
+defined in the manual are detected in the hardware and
+
+major challenge of compatibility layin storage addressing.
+
+cause an interruption. This type of interruption is distinct It wasclear that largemodelswouldrequire
+
+storage
+
+from an interruption caused by machinemalfunctions.
+
+capacitiesin the millionsofcharactersS. mall(serial)
+
+models would requireshort addresses to conserve precious
+
+Instruction decisions
+
+core spaceand instruction fetch time. Some help was given
+
+Pushdown stack us addressed registers. Serious considera-
+
+tion was given to a design based on a pushdown accumu-
+
+lator or stack.’ Thisplan was abandoned infavor of
+
+severarlegisterse,achexplicitlyaddressed.
+
+Since the
+
+advantages of the pushdown organizationare discussed in
+
+the literature: it suffices here to enumerate the disad-
+
+vantages whichprompted the decision to use an addressed-
+
+register organization:
+
+1. The performance advantageof a pushdownstack organi-
+
+by the decision to use register addressing, which reduces address appearances in the instruction stream by a factor approaching 2.
+An early decision had dictated that all addresses had to be indexable, and that a mechanism had to be provided for making all programs easily relocatable. The indexing technique had fully proved its worth in current ~ystems.~ This technique suggestedthat abundant address size could be attained through a full-sized index register, used as a base. This approach, coupled with a truncated address in
+
+zation is derived principally from the presence of several
+
+the instruction, gives consequengt ains in instruction
+
+fast registers, not from the way they are used or specified. density. The base-register approach was adopted, and
+
+2. The fraction of “surfacings” of data in the stack which
+
+are “profitable,”i.e.,what wasneedednext,is
+
+about
+
+one-half in generaluse,because of the occurrence of
+
+repeated operands (both constants and common factors).
+
+This suggests the use of operations such as TOP and SWAP,
+
+whichrespectivelycopysubmerged
+
+data to the active
+
+positions and assist in clearing submerged data when the
+
+information is no longer needed.
+
+then augmented,for some instructions, with a second level of indexing.
+Now the question was: How much capacity was to be madedirectlyaddressable, and howmuchaddressable only via base registers? Some early uses of base register techniqueshad been fairlyunsuccessful,principally becauseofawkward transitions between direct and base addressing. It wasdecided to commit the systemcompletely to a base-register technique; the direct part of the
+
+3. With TOP’s and SWAP’s counted, the substantial in-
+
+address, the displacement, was made so small (12 bits,
+
+struction density gained by the widespread use of implicit or 4096 characters) that direct addressing is a practical
+
+94
+
+addresses is about equalled by that of the same instruc- programming technique only on very small models. This
+
+AMDAHL, BLAAUW AND BROOKS
+
+DOUBLE WORD
+
+D
+
+WORD
+
+WORD HALFWDRD - r H A L N V D R D
+
+. >
+
+-BYTE"
+
+rsyTE I
+BYTE-
+
+ILONG FLOATING-POIAT NUMBER
+
+I
+
+I
+
+I
+
+I
+
+56 FRACTION
+
+1
+
+L'
+
+I
+
+71
+
+ZONEDDECIMALNUMBER
+
+j"[+
+
+FIXED-LENGTHLOGICALINFORMATION
+
+"""
+I
+I
+
+LOGICALDATA
+
+0
+
+31
+
+VARIABLE-LENGTHLOGICALINFORMATION
+
+I
+
+8
+
+I
+
+8
+
+CHARACTER
+
+CHARACTER
+
+" " " " " "
+
+INSTRUCTIONS BY FORMTAYTPE I
+
+?X FORMAT
+
+8
+
+4
+
+OP CODE
+
+RI
+
+RR FORMAT
+8 OP CODE
+L
+0
+
+4
+
+4
+
+RI
+
+R2
+
+I
+
+7
+
+II
+
+15
+
+4 4
+
+12
+
+x2
+
+62
+
+02
+
+RS FORMAT
+8 OP CODE
+
+SI FORMAT
+
+8 DP CODE
+
+0
+
+7
+
+8
+
+4
+
+I2
+
+BI
+
+15
+
+19
+
+SS FORMAT
+8 OP CODE
+
+4
+
+4
+
+LI
+
+L2
+
+BI
+
+0
+
+7
+
+II
+
+15
+
+19
+
+I
+
+"_
+
+I
+
+I
+
+I
+I
+
+4
+
+4 4
+
+4
+
+4
+
+"_
+
+DIGIT
+
+ZONE
+
+DIGIT
+
+SIGN
+
+DIGIT
+
+I
+
+""_
+
+CHARACTER
+
+4
+
+4
+
+4
+
+RI
+
+R3
+
+62
+
+12 Dl
+31
+
+12
+
+4 4
+
+Dl
+
+82
+
+31
+
+35
+
+12 02
+I
+12 02
+47
+
+Figure 3 Boundary alignment of formats.
+
+95
+ARCHITECTURE OF THE IBM SYSTEM/360
+
+commitment implies that all programs are location-inde- gaps in the addressing sequence.
+
+pendente, xcept for constants used to load the base
+
+Separate us universal accumulators. There are several
+
+registers. Thus, all programs can easily be relocated. This advantages of having fixed- and floating-point arithmetic
+
+commitment also implies that the programming support use the samelogical(asopposed to physical)registers.
+
+effectively and efficiently handles the mechanics of base-
+
+There are some less obvious disadvantageswhich weighed
+
+registeruse. The assembler automatically constructs and in favor of separate accumulatorsets. First, in a given
+
+assignsbase-plus-displacementaddresses as it constructs register specification (4 bits, in our case) the use of sepa-
+
+the symbol table.The compilers not only do this, but also rate sets permits more registers to be specified because of
+
+allocate base registersto give efficient programs.
+
+the information implications of the operation code. Sec-
+
+Decimal us binary addressing. It wasdecided to use ond, in the largemodels instruction execution and the
+
+binary rather than decimaladdressing,because(a)as-
+
+preparation of later instructions are doneconcurrently
+
+sembly programsremove the useronelevelfrom
+
+the in separate units. To use a single register set would couple
+
+address, thus reducing the importance of familiar usage,
+
+theseclosely, and reduce the asynchronousconcurrency
+
+(b) binary addressing is more efficient in the ratio 3.32/
+
+that can be attained. Historically,indexregistershave
+
+4.00, and (c) table exploitation iseasier and moregen-
+
+been separated from fixed-point registers, limiting analy-
+
+eral becauseany datum can bemade into or added to sis of register allocation to index quantities only. Inte-
+
+a binary address, yielding a valid address. This decision,
+
+gration of these facilities bringsthe full power of the fixed-
+
+however, represented some conflict withpast approaches. point arithmetic operation set to bear upon indexing
+
+Machines for purely business applications had often used computations. The advantages of the integration appear
+
+decimaal ddressing (in the ancestral machine of the
+
+throughout programexecution(evencompiler
+
+and as-
+
+family). Most businesscomputersnowhavebinary ad- sembly execution), whereasthe register allocation burdens
+
+dressing or have evolved to mixed-radix addressing.
+
+only compilationand assembly.
+
+Multiple accumulators. An extrapolation of technological trends indicated the probable availability of small,
+
+Znput/output system
+
+high-speed storage. Consequently, the design uses a sub- The method of input/output control would have been a
+
+stantial number of logicallyidentifiableregisters, which major compatibility problemwere it not for the recognition
+
+are physicallyrealized in corestorage,localhigh-speed
+
+of the distinction between logical and physical structures.
+
+storage, or transistors, according to the model. There are Smallmachinesuse CPU hardware for 1/0 functions;
+
+sixteen32-bitgeneral-purposeregisters and four64-bit
+
+largemachinesdemandseverailndependencthannels,
+
+floating-pointregisters in the logicaldesign,withroom
+
+capable of operating concurrently with the CPU and with
+
+for expansionto eight floating-point registers. Surprisingly each other. Such large-machine channels often each con-
+
+enough, the multiple-registerdecisionwas not a large- tain more components than an entire small system.
+
+small conflict. Each model has an appropriate (and differ-
+
+Channel instructions. The logicaldesignconsidersthe
+
+ent) mechanization of the same logical design.
+
+channel as an independently operating entity. The CPU
+
+Storage hierarchies. Technologypromises to yield a program starts the channel operation by specifying the
+
+continuingspectrum of storage systemws hosespeed
+
+beginning of a channel program and the unit to be used.
+
+variesinverselywithcapacity for equal cost-per-bit. Of The channelinstructions, specialized for the 1/0 function,
+
+equal significance, problem requirements naturally follow specify storage blocks to be read or written, unit oper-
+
+a matching pattern - small quantities of data are used ations, conditional and unconditional branches within the
+
+with great frequency,medium quantities withmedium
+
+channel program, etc. When the channel program ends,
+
+frequency, and very large quantities with low frequency.
+
+the CPU program is interrupted, and complete channel
+
+Thesefactspromise
+
+substantial performance/cost ad-
+
+and device status information are available.
+
+vantages if storage hierarchies canbe effectively used.
+
+An especially valuable feature is command chaining, the
+
+It wasdecided to accept the engineeringa,rchitec-
+
+ability of successivechannel instructionsto give a sequence
+
+tural, and programmingdisciplinesrequired
+
+for stor-
+
+ofdifferent operations to the unit, such as SEARCH,
+
+age-hierarchyuse. The engineermustaccommodate in
+
+READ, WRITE, READ FOR CHECK. This feature per-
+
+one systemseveral storage technologies,with separate mitsdevices to bereinstructedin very short times, thus
+
+speeds,circuits, power requirements,busingneeds, etc., substantially enhancing effective speed.
+
+all requiring asynchronous operation of all storage with
+
+Standardinterface. The generalization of the com-
+
+respect to the CPU. The system programmer must contend municationbetween the central processing unit and an
+
+withawkwardboundarieswithin total storage capacity input/output device has yielded a channel which presents
+
+and must allocate usage. He mustdeviseaddressingfor
+
+a standard interface to the device control unit. This inter-
+
+very largceapacitiesb,locktransfers,
+
+and means of face wasachievedbymaking the channel design trans-
+
+96
+
+handling, indexing acrossand providing protection across parent, passing not only data, but also control and status
+
+AMDAHL, BLAAUWAND BROOKS
+
+information between storage and device. AU functions
+peculiar to the device are placed in the control unit. The interface requires a total of 29 lines and is made independent of time through the use of interlocking signals.
+Implementation. In small models, the flow of data and control information is time-shared between the CPU and the channel function.When a byte of data appears from an 1/0 device, the CPUis seized, dumped, used and restored. Although the maximum data rate handled is lower (and the interference with CPU computation higher) than with separate hardware, the function is identical.
+Once the channel becomes a conceptualentity, using time-shared hardware, one may have a large number of channels at virtually no cost save the core storage space for the governing control words. This kind of multiplex channel embodies up to 256 conceptual channels, all of which may be concurrently operating, when the total data rate is within acceptable limits. The multiplexing constitutes a major advance for communications-based systems.
+Conclusion
+This paper has shown how the design features were chosen for the logical structureofthe six models that comprise the IBM System/360. The rationale has been given For the adoption of the data formats, the instruction set, m d the input/output controls. The main features of the new machine organization are its general-purpose utility For many types of data processing, the new approaches
+
+to large-capacity storage, and the machine-language compatibility among the six models.
+The contributions discussed in this paper may be summarized as follows :
+1. The relative independence of logical structureand physical realizationpermits efficient implementation at various levels of performance.
+2. Tasks thatare common to operating a system for mostapplicationsrequire a complement of instructions and system functions that may serve as a base forthe addition of application-oriented functions.
+3. Theformats, instructions, register assignment, and over-all functions such as protection and interruption of a computer can be so defined that they apply to many levels of performance and that they permit diverse specialization for particular applications.
+It is hoped that the discussions of these design features will shed some light on the present and future needs of data processing system organization.
+Appendices
+The design resulting from the decision process sketched above is tabulated in five appendices showing formats, data nd instruction codes, storage assignments and interruptionaction. (Appendices I through 5 appear on the following four pages.)
+
+Acknowledgments
+
+References
+
+b e implementation of System/360 depends upon diverse ievelopments by many colleagues. The most important of hese developments were glass-encapsulated semi-interated semiconductorcomponents,printedcircuitback)anels and interconnections, new memories, read-only torages and microprogram techniques, new 1/0 devices, rnd a new level and approach to software support.
+The scope of the compatibility objective and of the whole ;ystem/360 undertaking was largely due to B. 0. Evans,
+
+1. D. W. Sweene.y., “An-! malysisofFloating-Poir ItAddition and Shifting,” to be published in the ZBM-Systems Journal.
+2. See, forexample, R. S . Barton, “ANewApproach to the Functional Design of a Digital Computer,” Proc. WJCC 19, 393-396 (1961).
+3. F. P. Brooks, Jr., “RecenDt evelopmentsinComputer Organization,” Adcances in Electronics 18, 45-64 (1963).
+4.G.A.Blaauw,“Indexing,”in Planning a Computer System, W. Buchholz, ed., McGraw-Hill Book Company Inc., 1962,
+pp. 150-178.
+
+Jata Systems Division Vice-President-Development.
+
+Received January 21, 1964
+
+97
+
+ARCHITECTURE OF THE IBM SYSTEM/360
+
+rg
+OD
+
+m
+
+!i
+
+Appendix I All operation codes are shown in the following table. The 8-bit codes are grouped by the main classes,suchas fixed-point
+
+5
+: m
+
+arithmetic, floating-point arithmeticand logical operations. The codes are furthermore grouped according to the five main instruction formats RR (register-register), RX (register-indexedstorage loca-
+
+E
+
+tion), RS (register-storage), SI (storage-immediate information) and
+
+SS (storage-storage).
+
+O P E R A T I O NC O D E S
+
+FORMAT
+
+RR
+
+RR
+
+FIXED-POINT
+
+C LBARSASN C HAINN0G
+
+FULLWOROI
+
+S I ~ ~ ~ L I ~ ALN DLE &GA L
+
+o o o o x x xxxx x x
+
+ooolxxxx
+
+RR
+
+RR
+
+F L O A T I N G - P O I N TF L O A T~~ I N G - P O I N T
+
+LQNG
+
+%NE1
+
+ooloxxxx
+
+oollxxxx
+
+0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010
+1011 1100 1101 1110 1111
+
+LOAD POSITIVE
+
+L O A DP O S I T I V E
+
+LOAD NEGATIVE
+
+L O A DN E G A T I V E
+
+L O A D A N 0T E S T
+
+L O A DA N 0T E S T
+
+LOAO COMPLEMENT LOADCOMPLEMENT
+
+S E T PROGRAM MASK AN0
+
+HALVE
+
+B R A N ACNH0
+
+L I N K COMPARE L O G I C A L
+
+BRANCH ON COUNT OR
+
+BRANCH/CONOITION EXCLUSIVE OR
+
+SKEETY
+
+LOAO
+
+LOAD
+
+I N S EKRETY
+
+COMPARE
+
+COMPARE
+
+S U P E R V I SCOARL L
+
+A00
+
+ADDN
+
+SUBTRACT
+
+S U B T R A C TN
+
+MULTIPLY
+
+MULTI PLY
+
+DIVIDE
+
+OIVIOE
+
+ADO L O G I C A L
+
+ADO U
+
+S U B T R A C TL O G I C A LS U B T R A C TU
+
+L O A DP O S I T I V E L O A DN E G A T I V E L O A DA N 0T E S T LOAOCOMPLEMENT HALVE
+LOAO COMPARE ADO N S U B T R A C TN MULTIPLY DIVIDE ADO U S U B T R A C TU
+
+RX STORE
+
+FORMAT CLASS
+
+FIXED-POINT HALFWORO
+AY!LEEANSHLJ1P?G
+
+RX
+
+RX
+
+FIXED-POINT
+
+F U L LFWL OOARTDI N GF- PLOOIANTTI N G - P O I N T
+
+AUQ5rnL
+
+LPY4
+
+xxxx
+
+olooxxxx
+
+ololxxxx
+
+OAlOXXXX
+
+0000 0001 0010 001 1 0100 0101 0110 0111 1000 I001 1010 1011 1100 1101 1110 1111
+
+SSTTOORREE L O A DA D D R E S S S T O R EC H A R A C T E R I N S E R TC H A R A C T E R EXECUTE BRANCHAN0 L I N K BRANCH ONCOUNT BRANCH/CONOITlON LOAD COMPARE ADO SUBTRACT MULTIPLY
+CONVERT-DECIMAL CONVERT-BINARY
+
+STORE
+AN0 COMPARE L O G I C A L OR E X C L U S I V E OR LOAD COMPARE ADD SUBTRACT MULT I P L Y DIVIDE ADO L O G I C A L S U B T R A C TL O G I C A L
+
+LOAD COMPARE A 0 0N S U B T R A C TN MULTIPLY OIVIOE ADDU S U B T R A C TU
+
+RX
+SnmI
+olllxxxx
+LOAO COMPARE ADO N S U B T R A C TN MULTIPLY DIVIDE A 0 0U S U B T R A C TU
+
+Appendix 2 continued
+
+from addressableregisters and storage. The PSW is storedupon
+
+interruption. TheChanneCl ommandWordcontrols
+
+input/output
+
+operation and sequencing. The commands whichmaybegivento
+
+thechannelarelisted as part of the table.The ChannelAddress
+
+Word is used to initiate input/output sequencing. The Channel Status
+
+Wordindicatesthechannelstatus at thecompletion of an input/
+
+output operation or, when specified, during an 1/0 operation.
+
+CONTROL WORD FORMATS
+
+B a s ea n dI n d e xR e g i s t e r s
+
+rO-O-O-O-O-O-O-O-O-O-1-1-1-1-1-1-1-1-1-1-2-2-2-2-2-2-2-2-2-2-3-3~
+
+I
+
+I
+
+I
+
+I
+
+i
+
+I
+
+ADDRESS BASE
+
+OR I N D E X
+
+I
+
+I
+
+I
+
+I
+
+L0-1-2-3-4-5-6-7-8-9-0-1-2-3-4-5-6-7-B-9-0-1-2-3-4-5-6-7-8-9-0-1J
+
+- 0
+
+7 Ignored
+
+- 8 3 1 B a s ea d d r e s s
+
+or i n d e x
+
+-3-3-3-3-3-3-3-3-4-4-4-4-4-4-4-4-4-4-5-5-5-5-5-5-S-5-5-5-6-6-6-61
+
+Ill
+
+I
+
+I
+
+A D D RI NESSTSR U C T I O N
+
+I
+
+I
+
+- 0
+
+7 S y s t e mm a s k
+
+0
+
+M u l t i p l e xcohra n nme La s k
+
+I
+
+S e l e c t co hr a n n e L
+
+1 mask
+
+2
+
+S e l e c t oc rh a n n e l
+
+2 mask
+
+3
+
+S e l e c t oc rh a n n e L
+
+3 mask
+
+4
+
+S e l e c t oc rh a n n e l
+
+4 mask
+
+5
+
+S e l e c t oc rh a n n e l
+
+5 mask
+
+6
+
+S e l e c t oc rh a n n e l
+
+6 mask
+
+- 7
+
+E x t e r n a l mask
+
+8 11 P r o t e c t i o n k e y
+
+12
+
+A mS( CAo d)I Ie
+
+13
+
+M a c h i n ec h e c km a s k
+
+(M)
+
+14
+
+wait state (w)
+
+15
+
+P r o bsl et amt e
+
+(P)
+
+- 1 6 31 I n t e r r u p t i o n c o d e
+
+- 32 33 I n s t r u c t i o n L e n g t h c o d e ( I L C )
+
+- 34 35 C o n d i t i o n c o d e ( C C )
+
+- 36 39 P r o g r a mm a r k
+
+36
+
+F i x e d - p o ionvte r f l mo wa s k
+
+37
+
+D e c i moavle r f Lmo ua s k
+
+38
+
+E x p o n eunntd e r f L mo wa s k
+
+39
+
+S i g n i f i c a mn caes k
+
+Appendix I continued
+
+RS.SI FORMAT BRANCHING,
+""""-"_ C L A SSST A T USSW I T C H I N G AND S H I F T I N G
+
+RSsSI FIXED-POINT. L O G I C A L . AND
+lNeL!lLoUlPuI
+
+xxxx
+
+loooxxxx
+
+loolxxxx
+
+0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
+
+SSEYT S T E M
+
+MASK
+
+LOAD PSW DIAGNOSE W R IDTIER E C T R EDAI R0 E C T BRANCH/HIGH BRANCH/LOW-EQUAL S H I FRTI G HSTL S H I FLTE FSTL SHIFT RIGHT S SHIFT LEFT S S H I F T R I G H TD L S H I F T L E F TD L SHIFT RIGHT D SHIFT LEFT D
+
+STORE MULTIPLE TEST UNDERMASK MOVE
+AN0 COMPARE L O G I C A L OR E X C L U S I V E OR L O A 0M U L T I P L E
+START I/O
+TEST 1/0 HALT 1/0 T E S TC H A N N E L
+
+loloxxxx
+
+1OllXXXX
+
+*
+E
+3 s n m e
+m
+%
+1
+1
+E
+VJ
+2
+1
+-F .
+w m
+0
+
+FORMAT CLASS
+xxxx
+0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
+
+llooxxxx
+
+MOVE NUMERIC MOVE MOVE ZONE AND COMPARE L O G I C A L OR E X C L U S I V E OR
+
+lll0xxxx
+
+TRANSLATE T R A N S L A T EA N DT E S l EDIT E D I T AND MARK
+
+Legend
+
+N = Normalized
+
+SL DL
+
+= =
+
+l
+
+So gi ni Dou
+
+cg al el ble
+
+logical
+
+U = Unnormalized
+
+S D
+
+= =
+
+Single Double
+
+5s
+oEZlMAL
+1lllXXXX
+MOVE W OFFSET PACK UNPACK
+
+ZEROAND COMPARE ADO SUBTRACT MULTIPLY DIVIDE
+
+ADD
+
+Appendix 2 The formatosf all controwlords required for CPU and channel operation are shown in the following table. Thbease and index registers provide 24 bits of address and are specified by the B and X fields of instructionsT. he Program Status Word controls instructionsequencing and indicatesthecompleteCPUstatus apart
+
+d rg
+
+Appendix 2 continued
+
+C h a n n eCl o m m a n dW o r d
+
+~O-O-O-O-O-O-O-O-O-O-1-1-1-1-1-1-1-1-1-1-2-2-2-2-2-2-2-2-2-2-3-3~-
+
+I
+
+I
+
+I COMMAND CODE I
+
+DATA ADDRESS
+
+LI O-1-2-3-4-5-6-7-8-9-0I-1-2-3-4-5-8-7-8-9-0-~-2-3-4-5-6-7-~-9-0-~J---
+
+-r3-3-3-3-3-3-3-3-4-4-4-4-4-4-4-4-4-4-5-5-5-5-5-5-5-5-5-5-6-6-6-6~
+
+I
+
+I
+
+I
+
+I
+
+I FLAGS I O 0 01
+
+I
+
+COUNT
+
+I
+
+I
+
+I
+
+I
+
+" ~2-3-4-5-6-7-8-9-0-1-2-3-4-5-6-7-0-9-0-1-2-3-4-5-6-7-8-9-0-1-2-3J
+
+- 0
+
+7 C o m m a n dc o d e
+
+- 8 31 D a t aa d d r e s s
+
+- 32 36 Command f l a g s
+
+32
+
+C h adi anftl aa g
+
+33
+
+C h acionm m afnl ad g
+
+34
+
+S u p p r e sl es n g ti nh d i c a t i of nl a g
+
+35
+
+S fkl iapg
+
+36
+
+P r o g r a m - c o n t r o l l iendt e r r u p t i fol na g
+
+37 - 39 Z e r o
+- 40 47 I g n o r e d - 4 8 63 C o u n t
+
+C h a n n e lA d d r e s sW o r d
+
+rO-O-O-O-O-O-O-O-O-O-1-1-1-1-1-1-1-1-1-1-2-2-2-2-2-2-2-2-2-2-3-~,
+
+I
+
+I
+
+I
+
+I KEY 10 0 0 01
+
+COMMAND ADDRESS
+
+LI 0-1-2-3-4-I5-6-7-8-9-0I-1"3-4-5-6-7-8-9-0-1-2-3-4-5-6-7-8-9-~-~J
+
+- 0
+
+3 P r o t e c t i o nk e y
+
+- 4 - 7 Z e r o
+8 31 C o m m a n da d d r e s s
+
+I I I
+I I I
+I I
+
+C h a n n e lS t a t u sW o r d
+
+r0-0-0-0-0-0-0-0-0-0-~-1-1-1-~-1-~-~-1-1-2-~-2-~-~-~~~-~-~~~~3~3,~~~
+
+I
+
+I
+
+I
+
+I KEY I O 0 0 01
+
+COMMAND ADDRESS
+
+I I
+
+IL0-1-2-3-4-5I-6-7-8-9-0-I1-2-3-4-5-6-7-8-9-0-1-2-3-4-5-6-7-~-g-0-~~--
+
+I
+
+"r3~3"3"3"3"3"3~3"4-4"4"4-4-4-4-4-4-4-5-5-5-5-5-~-5-5-5-5~~-~-~-6,
+
+I
+
+I
+
+I
+
+I
+
+STATUS
+
+I
+
+COUNT
+
+I
+
+- - ~ 2 -I 3 - 4 - - 5 " & 7 - 8 - 9 - O - - 1 - 2 - 3 - 4 - - 5 - 6 - 7 - B - 9 - O - ~ - ~I- 3 - 4 - ~ - ~ - 7 - ~ - g - ~ - ~ - ~ - ~ J
+
+I
+
+- 0
+
+3 P r o t e c t i o nk e y
+
+- 4
+
+7 Zero
+
+- 8 31 C o m m a n da d d r e s s
+
+- 32 47 S t a t u s
+
+32
+
+Attention
+
+33
+
+S t amt uosd i f i e r
+
+34
+
+Control unit end
+
+35
+
+Busy
+
+36
+
+C h a nennedl
+
+37
+
+D e vei nc de
+
+38
+
+Ucnhiet c k
+
+39
+
+Uenxi ct e p t i o n
+
+40
+
+P r o g r a m - c o n t r o lilnetde r r u p t i o n
+
+(continued overleaf)
+
+9
+
+d
+
+6 8
+
+-F
+
+m
+
+i
+
+Appendix 2 continued
+
+41
+
+I n c o r r e lc et n g t h
+
+42 P r o g r aamh e c k
+
+5
+
+43
+
+P r o t e c t i ocnh e c k
+
+44
+
+C h a n n e ld a t ac h e c k
+
+45 C h a n n e lc o n t r o lc h e c k
+
+m
+
+46
+
+I n tcecorhnfetacrckoel
+
+-47 C h a i n i ncgh e c k
+48 63 C o u n t
+E
+
+Appendix 3 All permanently assigned storage locations are shown in this table. These locations are addressed by the CPU and 1/0 chan-
+nels during initial program loading, during interruptions and in order to update the timer. During initial program loading 24 bytes
+are read from a specified input device into locations 0 to 23. This information is subsequentlyusedas CCW's to specifythelocations of further input information and as a PSW to control CPU operation
+after the loading operation is completed. During an interruption the current PSW is stored in the"old"location and the PSW from the "new" location is obtained as thenext PSW. The timer is counted downandprovides an interrupt whenzero is passed. All permanently assignedlocationsmayalso be addressed by theprogram.
+
+PERMANENT STORAGE ASSIGNMENT
+
+AOPBESS
+
+CENGIY
+
+EuREQsE
+
+0 8 16 24 32 40 48 56 64 72 76 80 84 88 96 104 112 120 128
+
+0000 0000 d o u b l e w o r d
+
+I n i t i a l p r o g r a m L o a d i n g PSW
+
+0000 1 0 0 0 d o u b l e w o r d
+
+Initial program loading CCWl
+
+0001 0000 d o u b l e w o r d
+
+Initlal program loadlng CCW2
+
+0001 1000 d o u b l ew o r dE x t e r n a lo l d
+
+PSW
+
+0010 0000 d o u b l ew o r dS u p e r v i s o rc a l lo l dP S W
+
+0010 1000 d o u b l e w o r d
+
+Program old PSW
+
+0 0 1 1 0000 d o u b l e w o r d
+
+Machine old PSW
+
+0 0 1 1 0 0 0d o u b l ew o r dI n p u t / o u t p u to l dP S W
+
+0100 0 0 0 0 d o u b l ew o r dC h a n n e ls t a t u sw o r d
+
+0100 1000 word
+
+Channel address word
+
+0100 1100 w o r d
+
+Unused
+
+0101 0 0 0 0 T iwmoer d
+
+0 1 0 10 1 0 0w o r d
+
+Unused
+
+0101 1000 d o u b l e w o r d
+
+External new PSW
+
+0110 0000 d o u b l e w o r d
+
+Supervisor call new PSW
+
+0110 1000 d o u b l e w o r d
+
+Program new PSW
+
+0 1 1 1 0000 d o u b l ew o r dM a c h i n en e w
+
+PSW
+
+0 1 1 1 1000 d o u b l e w o r d
+
+Input/output new PSW
+
+1000 0000
+
+D i a sg acn rao ens a-t *oi uc t
+
+"-
+The size of the dlagnostic scan-out area depends upon the particular model and 1/0 channels.
+
+Appendix 4 continued
+
+LSSSEd
+
+a v a l l a b lUan latncdh a n n ealv a i l a b l e
+
+busy
+
+Unit or channel busy
+
+carry
+
+A c a r royuottfhsei gpno s i t i oonc c u r s
+
+complete
+
+Last result byte nonzero
+
+CSW ready
+
+Channel status word ready for test or interruption
+
+CSW stored
+
+Channel status word stored
+
+equal.
+
+O p ecroeamqnpudaasrle
+
+F
+
+FuLlword
+
+g zero
+
+Result is greater than zero
+
+H
+
+Halfword
+
+h a l t eDda ttar a n s m i s s i o n
+
+stopped. U n i t ihnalt-resemtode
+
+high
+
+Flrst operand compares high
+
+incomplete
+
+Nonzero result byte; not last
+
+L
+
+p r e c i s i o nL o n g
+
+1 zero
+
+Result i s less than zero
+
+LOW
+
+First operand compares low
+
+m i x eSde l e c t ebdi tasrbeo tzhe raonodn e
+
+n ootp eUrn l t
+
+o r c h a n n enlootp e r a t i o n a l
+
+n o tw o r k i n gU n i t
+
+o r c h a n n e ln o tw o r k i n g
+
+not zero
+
+Result is not all Zero
+
+one
+
+Selected bits are one
+
+s v eRorevfselurolfwtt o w s
+
+S
+
+Short precision
+
+stopped
+
+Data transmlssion stopped
+
+working
+
+Unit o r channel working
+
+zero
+
+Result or selected bits are zero
+
+lscn
+T h e c o n d i t l o n c o d e a l s o m a y b e c h a n g e d b y L O AP0SW. S E T S Y S T E M MASK. DIAGNOSE. and by an Interruption..
+
+Appendix 5 All interruptions which may occur are shown in the following table.Indicated here arethe code in the old PSW which identifies the source of the interruption, the mask bits which may be
+used to prevent an interruption, and the manner in which instruction execution is affected. The instruction to be performed next if the interruption had not occurred is indicated in theinstruction address field of the old PSW. The length of thepreceding instructions, if available, is shown in the instruction length code, ILC, as is further detailed in the table.
+
+INTERRUPTION ACTION
+
+I N T E R R U P T I OSNO U R CIEN T E R R U P T I OCNO DMEA SIKLICN S T R U C T I O N
+IPPNIIF~eLIQN-------PBI-BIls"srLS-
+I=euf&uf& ( o l d P S W 5 6 . new PSW 120. priority 4)
+
+Multiplexor channel Selector channel 1 SeLector channel 2
+
+00000000 a a a a e a a a 00000001 a a a a a a a a 00000010 aaaaaaaa
+
+0 x 1 x 2 x
+
+complete complete complete
+
+Appendix 4 All instructions which set theconditioncode(bits 32 and 33 of the PSW) are listed in the following table. All other instructions leave thecondition code unchanged. Theeonditioncode determines the outcome of a BRANCH ON CONDITION instruction. The four-bit mask contained in thisinstructionspecifieswhichcodesettings will cause the branch to be taken.
+
+C O N D I T I O N CODE S E T T I N G
+
+Q
+
+ElX+P-PQini-&iihm.S*iS
+ADO H/F ADD L O G I C A L COMPARE H / F LOAD AND TEST LOAD COMPLEMENT L O A DN E G A T I V E L O A 0P O S I T I V E S H I F TL E F T DOUBLE S H I F TL E F TS I N G L E S H I F TR I G H T DOUBLE S H I F TR I G H TS I N G L E SUBTRACT H/F SUBTRACT LOGICAL
+"_" -D q c i m a l A r i t h m & j =
+ADO DECIMAL COMPARE DECIMAL SUBTRACT DECIMAL ZAEDRDO AND
+
+zepo zero equal zero zero zero zero zero zero zero zero zero
+"
+zero equal zero zero
+
+- 2
+
+a
+
+1 zero not zero
+LOW
+1 zero 1 zero 1 zero
+"
+1 zero 1 zero 1 zero 1 zero 1 zero n o tz e r o
+
+g zero zero.cart-y
+high g zero g zero
+"
+g zero g zero g zero g zero g zero g zero zeroscarry
+
+overflow carry
+
+"
+
+"
+
+.
+
+overflow
+
+"
+
+overflow overflow overflow
+
+"
+
+"
+
+overflow carry
+
+1 zero low
+L zero
+L zero
+
+go vzeer rf loo w high
+g ozveer rof l o w o gv ezr ef lroow
+
+"
+
+FlQntinS=el?inlt-Arithmmtlc
+
+ADO NORMALIZEDS/L
+
+zero
+
+1 zero
+
+g zero
+
+overflow
+
+ADD UNNORMALIZED S / L
+
+zero
+
+1 zero
+
+g zero
+
+overflow
+
+COMPARE S / L
+
+equal
+
+Low
+
+high
+
+"
+
+LOAD AND T E S TS / L
+
+zero
+
+L zero
+
+g zero
+
+"
+
+LOAD COMPLEMENTz eSr /oL
+
+1 zero
+
+g zero
+
+"
+
+L O A DN E G A T I V ES / L
+
+zero
+
+L zero
+
+"
+
+"
+
+zPeLOrOoSAI/ TLDI V E
+
+"
+
+g zero
+
+"
+
+SUBTRACT NORMALIZESD/L
+
+Zero
+
+1 zero
+
+g zero
+
+overflow
+
+b!a
+
+SUBTRACTUNNORMALIZEO S / Lz e r o
+
+1 zero
+
+g zero
+
+overflow
+
+Q
+
+Ll?alS*l-Q2SCStiQEi
+
+=rnni
+
+AND COMPAReEq uLaOl G I C A L
+
+zero
+
+n o tz e r o
+LOW
+
+"
+high
+
+" "
+
+2
+
+EDIT E D I T ANDMARK
+
+zero zero
+
+1 zero 1 zero
+
+g zero g zero
+
+" "
+
+E X C L U S I V E OR
+
+zero
+
+n o tz e r o
+
+"
+
+"
+
+OR
+
+zero
+
+n o tz e r o
+
+"
+
+"
+
+%
+
+TEST UNDER MASK
+
+zero
+
+mixed
+
+"
+
+one
+
+TRANSLATE AND T E S T z e r o
+
+incomplete complete
+
+"
+
+a2
+
+-
+
+Ineut=ol?teut-Qet~atinllE
+
+HALT 1/0
+
+hwaol rt ke idnnogt
+
+s t o ponppoeetdr
+
+k
+
+START 1/0 TEST CHANNEL
+
+a v a i l a b l e CSW s t obruesdy
+
+w no or kt i n g
+
+CSW r ewaodrpnkyeoirnt g
+
+n o to p e r
+
+TEST 1 / 0
+
+a v a i l a b l e CSoWp ewsnrot or trkei nd g
+
+v)
+
+Appendix 5 continued
+
+S e l e c tcohra n n e l S e l e c ct oh ra n n e l S e l e c ct oh ra n n e l S e l ecchtaonr n e l
+
+3
+
+0 0 0 0 0 0a 1a 1a a a a a a
+
+4
+
+0 0 0 0 0 a1 a0 g0 a a a a a
+
+5
+
+0 0 0 0 0 a1 a0 a1 a a a a a
+
+6
+
+0 0 0 0a0a1a1a0a a a a
+
+3 x
+
+4
+
+x
+
+5
+
+x
+
+6
+
+x
+
+e~sgrsm( o l d PSW 40n. ew
+
+PSW 1 0 4 .p r i o r i t y2 )
+
+complete complete complete complete
+
+Operation
+
+00000000 00000001
+
+1.2.3
+
+suppress
+
+P r i v i l e g e do p e r a t i o n
+
+0 0 0 0 0 0 0 0 0 0 0 0 0s0u1p0p r e s s 1 . 2
+
+Execute
+
+00000000 00000011
+
+2
+
+suppress
+
+Protection
+
+0 0 0 0 0 0 0 0 0 0 0 0s00u.12p0.p30r e s s / t e r m i n a t e
+
+Addressing
+
+00000000 0 0 0 0 0011011s. 2u.p3p r e 4 s / t e r m i n a t e
+
+Specification
+
+00000000 00000110
+
+1.2.3
+
+suppress
+
+Data
+
+t e r m i n a t e 0 0 020.030 0 0 0 0 0 0 0 1 1 1
+
+F i x e d - p o i no tv e r f l o w
+
+0 0 0 0 0 0 0 0 0 0 0 0 1 0 0306
+
+1.2
+
+complete
+
+F i x e d - p o idnitv i d e
+
+00000000 00001001
+
+1.2
+
+suppress/complete
+
+D e c iomv ae lr f l o w
+
+00000000 0 0 0 0 1 0 1 0 37 3
+
+complete
+
+D e dc i vmi ad le
+
+00000000 00001011
+
+3
+
+suppress
+
+E x p o noevnet r f l o w
+
+00000000 00001100
+
+1.2
+
+terminate
+
+E x p o n eunntd e r f l o w
+
+00000000 0 0 0 0 1 13081
+
+1.2
+
+complete
+
+Significance
+
+00000000 0 30 90 0 1 1 1 0
+
+1.2
+
+complete
+
+F l o a t i n g - pd oi vi ni dt e
+
+0 0 0 0 0 0 0 0 0 s0u0p01p1. 2r1e1s1s
+
+Bgeqrvlgnr C a l l ( o l d PSW 32n. ew
+
+PSW 9 6 . p r i o r i t y 2 )
+
+I n s t rbui tcst i o n
+-"_E x t e r n a l ( o l d
+
+PSW 2 4 .
+
+00000000 rrrrrrrr n e w PSW 8 8 . p r i o r i t y
+
+1 3)
+
+E x t e r n a ls i g n a l 1
+
+E x t e r n a ls i g n a l 2
+
+E x t esr inganl a l
+
+3
+
+E x t e r n a ls i g n a l 4
+
+E x t esringanla l
+
+5
+
+E x t esr inganl a l
+
+6
+
+I n t e kr reuyp t
+
+Timer
+
+00000000 x x x x x x x l 7 x
+
+00000000 x x x x x x l x 7 x
+
+00000000 x x x x x l x x 7 x
+
+00000000 x x x x l x x x
+
+7
+
+x
+
+00000000 x x x l x x x x 7 x
+
+00000000 x x l x x x x x 7 x
+oooooooo X l x x x x x X 7 X
+
+00000000 1 x x x x x x x 7 x
+
+complete
+complete complete complete complete complete complete complete complete
+
+M a c h i n eC h e c k( o l d
+
+PSW 4 8n. e w
+
+PSW 1 1 2 ,p r i o r i t y1 )
+
+M a cmhai nl feu n c t i o n
+
+00000000 00000000 1 3 x
+
+terminate
+
+Lrams!
+a D e v i caed d r e sbsi t s r B i t so Rf 1a n dR 2f i e l do f x Unpredictable
+
+SUPERVISOCRALL
+
+INSTRUCTIONLENGTH RECORDING
+
+INSTRUCTION PSWI NBSI T SR U CI NTSI OTNR U CI NTSI OTNR U C T I O N
+L%t?4ln_cQo€""a~~"""-~~~~-Q=~"""-L~t?4l~""""-FQ~~~~
+
+0
+
+00
+
+1
+
+01
+
+02 1
+
+10
+
+2
+
+10
+
+3
+
+11
+
+h0a0l f w o r d
+10 11
+
+N o ta v a i l a b l e One Two h a l f w o r d s Two h a l f w o r d s T h r e eh a l f w o r d s
+
+RR RX R S o r SI SS
+

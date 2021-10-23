@@ -1,0 +1,1185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> <html xmlns=http://www.w3.org/1999/xhtml xml:lang=en-GB style><!--
+ Page saved with SingleFile 
+ url: https://inst.eecs.berkeley.edu/~cs152/sp21/ 
+ saved date: Sat Oct 23 2021 11:42:37 GMT+0800 (中国标准时间)
+--><meta charset=utf-8>
+<title>Home Page for UCB CS152/CS252A, Spring 2021</title>
+<style>body{font-family:Myriad Pro,Arial,Helvetica,sans-serif}body{margin:0;padding:0;border:0;width:100%;background:#fff;min-width:600px}p{padding:5px;margin:0.5em}a{color:#369}a:hover{color:#fff;background:#369;text-decoration:none}#header{clear:both;float:left;width:100%}#header{color:black;background-color:gold;border-bottom:1px solid #000}#header h2{padding:.4em 15px 0 15px;margin:0}.colmask{position:relative;clear:both;float:left;width:100%;overflow:hidden}.colleft{float:left;width:100%;position:relative}.col1,.col2{float:left;position:relative;padding:0 0 1em 0;overflow:hidden}.leftmenu{background:#fff}.leftmenu .colleft{right:75%;background:#1C2045}.leftmenu .col1{width:71%;left:102%}.leftmenu .col2{width:21%;left:6%}#footer{clear:both;float:left;width:100%;border-top:1px solid #000;font-size:60%}#footer p{padding:10px;margin:0}#navigation{list-style:none;margin:2px;padding:0}#navigation a{background:silver;border:1px solid #393939;color:black;display:block;margin:0;padding:8px;text-decoration:none;font-weight:normal}#navigation a:hover{background:#2580a2;color:#fff}table{border-collapse:collapse}table,td{border:1px solid black}td{padding:5px}</style>
+<link type=image/x-icon rel="shortcut icon" href=data:><style>.sf-hidden{display:none!important}</style><link rel=canonical href=https://inst.eecs.berkeley.edu/~cs152/sp21/></head>
+ <body data-new-gr-c-s-check-loaded=14.1034.0 data-gr-ext-installed data-new-gr-c-s-loaded=14.1034.0>
+ <div id=header align=center>
+ <h2>Computer Science 152/252A:<br>
+ CS152 Computer Architecture and Engineering<br>
+ CS252A Graduate Computer Architecture</h2>
+ <h3>Spring 2021</h3>
+ <a href=http://www.eecs.berkeley.edu/~krste><h3>Prof. Krste
+ Asanović</h3></a>
+ <h3>TAs: <a href=https://people.eecs.berkeley.edu/~a_ou/>Albert Ou</a>
+ and <a href=https://www.jzhao.me/>Jerry Zhao</a></h3>
+ CS152/CS252A Lectures: Monday and Wednesday, 09:00am-10:30am<br>
+ CS152 Discussion Sections: Friday 12-2pm DIS 101 / Friday 2-4pm DIS 102 <br>
+ CS252A Reading Discussion: Thursday 5-6pm <br>
+ <b> All lectures/discussion-sections/office-hours are Online </b><br>
+ Links to online content are posted on Piazza.<br>
+ <a href=https://piazza.com/berkeley/spring2021/cs152/home>152 Piazza</a>, <a href=https://piazza.com/berkeley/spring2021/cs252/home>252 Piazza</a><br>
+ </div>
+ <div class="colmask leftmenu">
+ <div class=colleft>
+ <div class=col1>
+ <p>
+ Welcome to the Spring 2021 CS152 and CS252A web page. This
+ semester the undergraduate and graduate computer
+ architecture classes will be sharing lectures, and so the
+ course web page has been combined.
+ </p>
+ <p>
+ CS152 is intended to provide a foundation for students
+ interested in performance programming, compilers, and
+ operating systems, as well as computer architecture and
+ engineering. Our goal is for you to better understand how
+ software interacts with hardware, and to understand how
+ trends in technology, applications, and economics drive
+ continuing changes in the field. The course will cover
+ the different forms of parallelism found in applications
+ (instruction-level, data-level, thread-level, gate-level)
+ and how these can be exploited with various architectural
+ features. We will cover pipelining, superscalar,
+ speculative and out-of-order execution, vector machines,
+ VLIW machines, multithreading, graphics processing units,
+ and parallel microprocessors. We will also explore the
+ design of memory systems including caches, virtual memory,
+ and DRAM.
+ An important part of CS152 is series of lab assignments
+ using real microprocessor designs implemented in
+ the <a href=http://chisel.eecs.berkeley.edu/>Chisel</a>
+ hardware description language, and running as simulators
+ and FPGA emulators hosted in the Amazon cloud <a href=https://fires.im/>(FireSim)</a>.
+ These simulators will give you an in-depth
+ look at a variety of processor architectural techniques.
+ Our objective is that you will understand all the major
+ concepts used in modern microprocessors by the end of the
+ semester.
+ </p>
+ <p>
+ CS252A is intended to provide essential background for
+ students intending to pursue research in computer
+ architecture or related fields, and also provides
+ preparation for the Berkeley EECS computer architecture
+ oral prelim examination. An important part of CS252A is
+ reading and discussion of classic architecture papers, as
+ well as a substantial course project.
+ </p>
+ <center>
+ <h3>Course Calendar with Handouts</h3>
+ <i>Note: Tentative, schedule subject to change!</i>
+ </center>
+ <p>
+ <table border=1>
+ <tbody><tr>
+ <td>
+ <b>Week</b>
+ </td>
+ <td style=min-width:100px>
+ <b>Date</b>
+ </td>
+ <td>
+ <b>Lecture</b>
+ </td>
+ <td>
+ <b>Readings<br>5th Edition</b>
+ </td>
+ <td>
+ <b>Readings<br>6th Edition </b>
+ </td>
+ <td>
+ <b>Assignments / Handouts</b>
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=2 align=center>1</td>
+ <td>
+ Wed Jan 20
+ </td>
+ <td>
+ L1: Introduction, Early Machines
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L01-Intro.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L01-Intro.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 1, App. A
+ </td>
+ <td>
+ Ch. 1, App. A
+ </td>
+ <td> </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Jan 22
+ </td>
+ <td bgcolor=lightgreen>
+ CS152 No section
+ </td>
+ <td bgcolor=lightgreen> </td>
+ <td bgcolor=lightgreen> </td>
+ <td bgcolor=lightgreen> </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>2</td>
+ <td>
+ Mon Jan 25
+ </td>
+ <td>
+ L2: Simple Machine Implementations, Microcoding
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L02-SimpleImps.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L02-SimpleImps.pdf>PDF</a>
+ </td>
+ <td>
+ </td>
+ <td> </td>
+ <td></td>
+ </tr>
+ <tr>
+ <td>
+ Wed Jan 27
+ </td>
+ <td>
+ L3: Pipelining
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L03-Pipelining.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L03-Pipelining.pdf>PDF</a>
+ </td>
+ <td>App. C.1-C.3 </td>
+ <td>App. C.1-C.3 </td>
+ <td>
+ PS 1 (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps1.pdf>PDF</a>, <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps1.doc>DOC</a>)
+ <br>
+ Lab 1 <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/lab1.pdf>PDF</a><br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/microcode.pdf>Handout 1</a><br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/microcode-table.docx>Blank microcode table</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Jan 28
+ </td>
+ <td bgcolor=lightgreen>
+ CS252A No Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=lightgreen> </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Jan 29
+ </td>
+ <td>
+ CS152 Section 1: Microcode, Lab 1 Overview
+ <a href="https://docs.google.com/presentation/d/10mGHs5DpbOZN3dRyhkyTiDoF_e_DBVJ1sX06c_YAeuw/edit?usp=sharing">Slides</a> 
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1nUER0rJlnyjFVqUsirclK-kWeKjYTuzNYBV0Z1viX78/edit?usp=sharing">Worksheet 1</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec01-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>3</td>
+ <td>
+ Mon Feb 1
+ </td>
+ <td>
+ L4: Pipelining II
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L04-PipeliningII.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L04-PipeliningII.pdf>PDF</a>
+ </td>
+ <td>
+ App. C.4-C.6
+ </td>
+ <td>
+ App. C.4-C.6
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Feb 3
+ </td>
+ <td>
+ L5: Memory Hierarchy
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L05-Memory.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L05-Memory.pdf>PDF</a>
+ </td>
+ <td>
+ App. B.1-B.2, Ch. 2.1-2.3
+ </td>
+ <td>
+ App. B.1-B.2, Ch. 2.1-2.2
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Feb 4
+ </td>
+ <td>
+ CS252A Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=pink>
+ <a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=4463978">"Design
+ of the B5000 System"</a>, Lonergan, King, 1961
+ <br>
+ <a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=5389178">"Architecture
+ of the IBM System/360"</a>, Amdahl, Blaauw, Brooks, 1964
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Feb 5
+ </td>
+ <td>
+ CS152 Section 2: Pipelining review
+ <a href="https://docs.google.com/presentation/d/1rnu95auBgbfyz8OuvabhfGWPJYugQW7EktHEoBAcGhw/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1gaC6IP7VKH90fMV9hGew91XWFSswQpo7FCncgDVmNCA/edit?usp=sharing">Worksheet 2</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec02-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>4</td>
+ <td>
+ Mon Feb 8
+ </td>
+ <td>
+ L6: Memory Hierarchy II
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L06-MemoryII.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L06-MemoryII.pdf>PDF</a>
+ </td>
+ <td>
+ App. B.3
+ </td>
+ <td>
+ App. B.3
+ </td>
+ <td bgcolor=pink>
+ PS 1 due <br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps1-sol.pdf>PS 1 solutions</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Feb 10
+ </td>
+ <td>
+ L7: Prefetching, Guest Lecture from Apple
+ (Last year's slides:
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L07-MemoryIII.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L07-MemoryIII.pdf>PDF</a>)
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ PS 2 (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps2.pdf>PDF</a>,
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps2.doc>DOC</a>)<br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/handout2.pdf>Handout 2</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Feb 11
+ </td>
+ <td>
+ CS252A Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=pink>
+ <a href="http://dl.acm.org/ft_gateway.cfm?id=641917">"The
+ Case for the Reduced Instruction Set Computer"</a>,
+ Patterson, Ditzel, 1980
+ <br>
+ <a href="http://dl.acm.org/citation.cfm?id=641918">Comments
+ on the "The Case for the RISC"</a>, Clark, Strecker,
+ 1980
+ <br>
+ <a href="http://dl.acm.org/ft_gateway.cfm?id=107003">"Performance
+ from architecture: comparing a RISC and CISC with
+ similar hardware organization"</a>, Bhandarkar,
+ Clark, 1991
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Feb 12
+ </td>
+ <td>
+ CS152 Section 3: PS 1 Review and Memory Hierarchy
+ <a href="https://docs.google.com/presentation/d/14oJbyYFDQQu-QsC-jvpA7dHLTUV6jWaPgZCAsOVzOsU/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ 
+ <a href="https://docs.google.com/document/d/1L1z88lOIZ4IN0e3cGfSUWpr0woWuUUJ9dEZlIiBRLeA/edit?usp=sharing">Worksheet 3</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec03-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=5 align=center>5</td>
+ <td>
+ Mon Feb 15
+ </td>
+ <td bgcolor=lightgreen>
+ President's Day Holiday
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=2>
+ Wed Feb 17
+ </td>
+ <td rowspan=2>
+ L8: Address Translation and Protection
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L08-AddressTranslation.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L08-AddressTranslation.pdf>PDF</a>
+ </td>
+ <td rowspan=2>
+ App. B.4-7
+ </td>
+ <td rowspan=2>
+ App. B.4-7
+ </td>
+ <td bgcolor=pink>
+ Lab 1 due
+ </td>
+ </tr>
+ <tr>
+ <td>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/lab2.pdf>Lab 2</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Feb 18
+ </td>
+ <td bgcolor=pink>
+ CS252A Projects Office Hours
+ </td>
+ <td colspan=2 bgcolor=pink>
+ (Email Krste for Zoom link)
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Feb 19
+ </td>
+ <td>
+ CS152 Section 4: Address Translation and Lab 2 Overview
+ <a href="https://docs.google.com/presentation/d/18qz5hUilAGoyBIe7i__2Ii87QptOTkT3gSDLiYV9tL4/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1ivSlSHm9tmmY0FNE83OI96umJchxa0vZrTvVxLIL5f0/edit?usp=sharing">Worksheet 4</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec04-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>6</td>
+ <td>
+ Mon Feb 22
+ </td>
+ <td>
+ L9: Virtual Memory
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L09-VirtualMemory.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L09-VirtualMemory.pdf>PDF</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Feb 24
+ </td>
+ <td>
+ L10: Complex pipelines, out-of-order issue, register renaming
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L10-ComplexPipes.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L10-ComplexPipes.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 3.1,3.4-3.5
+ </td>
+ <td>
+ Ch. 3.1,3.4-3.6
+ </td>
+ <td bgcolor=pink>
+ PS 2 due<br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps2-sol.pdf>PS 2 solutions</a> <br>
+ CS252A project proposals due
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Feb 25
+ </td>
+ <td>
+ CS252A Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=pink>
+ <a href=http://cacm.acm.org/magazines/2010/12/102128-ibms-single-processor-supercomputer-efforts/pdf>"IBM's
+ Single-Processor Supercomputer Efforts"</a>, Smotherman, Spicer,
+ CACM, 53(1), 2010<br>
+ <a href=https://ieeexplore.ieee.org/document/4607>"Implementation of Precise Interrupts in Pipelined Processors"</a>
+ , Smith, Pleszkun, ISCA, 1985 (IEEE Trans. Computer Journal version)<br>
+ <a href="http://dl.acm.org/ft_gateway.cfm?id=1464045">"Parallel
+ Operation in the Control Data 6600"</a>, Thornton, Proceedings of
+ the Fall Joint Computers Conference, vol 26, pp. 33-40, 1964<br>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Feb 26
+ </td>
+ <td>
+ CS152 Section 5: Midterm 1 Review
+ <a href="https://docs.google.com/presentation/d/1oNsMQevOEYWEzXcb8LcGfM7zfwRICgI-Wu0jN8rCd9U/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ 
+ 
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>7</td>
+ <td>
+ Mon Mar 1
+ </td>
+ <td bgcolor=yellow>
+ Midterm 1: (L1-L9) <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/midterm-1-sol.pdf>Solutions</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Mar 3
+ </td>
+ <td>
+ L11: Out-of-order execution
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L11-OutOfOrder.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L11-OutOfOrder.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 3.6, 3.8
+ </td>
+ <td>
+ Ch. 3.6, 3.8
+ </td>
+ <td>
+ PS 3 (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps3.pdf>PDF</a>,
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps3.doc>DOC</a>)
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Mar 4
+ </td>
+ <td colspan=3 bgcolor=pink>
+ CS252A Project Proposal Discussion, Session I
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Mar 5
+ </td>
+ <td>
+ CS152 Section 6: Out-of-order Execution
+ <a href="https://docs.google.com/presentation/d/1oeyWXqDKojXZYlZoP0_gP5CvSy-kq1xmNgo0M0EV_r0/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1D-NwRRWRT95LZMIvVASIN2Tcczm7KMk_IeKZ8oJk84g/edit?usp=sharing">Worksheet 6</a> (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec06-worksheet.pdf>PDF</a>)<br>
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>8</td>
+ <td>
+ Mon Mar 8
+ </td>
+ <td>
+ L12: Branch Prediction, Guest Lecture from Apple
+ (Last year's slides:
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L12-Superscalars.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L12-Superscalars.pdf>PDF</a> )
+ </td>
+ <td>
+ </td>
+ <td>
+ Ch. 3.3,3.9-3.10
+ </td>
+ <td bgcolor=pink>
+ Lab 2 due
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Mar 10
+ </td>
+ <td>
+ L13: VLIW
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L13-VLIW.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L13-VLIW.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 3.2,3.7
+ </td>
+ <td>
+ Ch. 3.2,3.7
+ </td>
+ <td>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/lab3.pdf>Lab 3</a><br>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Mar 11
+ </td>
+ <td colspan=3 bgcolor=pink>
+ CS252A Project Proposal Discussion, Session II
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Mar 12
+ </td>
+ <td>
+ CS152 Section 7: Branch Prediction, VLIW, Lab 3 Overview
+ <a href="https://docs.google.com/presentation/d/1DwUj8p5_PpN2TNtOYuPhfiBpGU0cW3heAIdlaKI91-s/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1tYgdojdlh3wuUgVLgOcWxaATx7z0LbMfKZJ5JdtE-RY/edit?usp=sharing">Worksheet 7</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec07-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>9</td>
+ <td>
+ Mon Mar 15
+ </td>
+ <td>
+ L14: Multithreading
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L14-Multithread.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L14-Multithread.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 3.12
+ </td>
+ <td>
+ Ch. 3.11
+ </td>
+ <td bgcolor=pink>
+ PS 3 due<br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps3-sol.pdf>PS 3 Solutions</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Mar 17
+ </td>
+ <td>
+ L15: Vectors
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L15-Vectors.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L15-Vectors.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 4.1-4.3 (App. G)
+ </td>
+ <td>
+ </td>
+ <td>
+ PS 4 (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps4.pdf>PDF</a>,
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps4.doc>DOC</a>)
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Mar 18
+ </td>
+ <td>
+ CS252A Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=pink>
+ <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5392028">"An
+ Efficient Algorithm for Exploiting Multiple Arithmetic units"</a>,
+ Tomasulo, IBM Journal, January 1967<br>
+ <a href="http://dl.acm.org/ft_gateway.cfm?id=357403">"Decoupled
+ Access/Execute Computer Architectures"</a>, Smith,
+ ISCA 1982 (ACM TOCS version)<br>
+ <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=491460">"The
+ MIPS R10000 Superscalar microprocessor"</a>, Yeager, IEEE Micro
+ 16(2), 1996
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Mar 19
+ </td>
+ <td>
+ CS152 Section 8: Multithreading and Vectors
+ <a href="https://docs.google.com/presentation/d/1WsrNVDOHZKoJThwBeI6YjVlqPYQoJUYdS003zbxnmJY/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1FtBI92VzLUCEBtIhHRbe3HX_k9lvfv0VuHy9uGZ1bZk/edit?usp=sharing">Worksheet 8</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec08-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=1 align=center>10</td>
+ <td>
+ Mar 22-26
+ </td>
+ <td bgcolor=lightgreen>
+ Spring Break
+ </td>
+ <td bgcolor=lightgreen>
+ &nbsp;
+ </td>
+ <td bgcolor=lightgreen>
+ &nbsp;
+ </td>
+ <td bgcolor=lightgreen>
+ &nbsp;
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>11</td>
+ <td>
+ Mon Mar 29
+ </td>
+ <td>
+ L16: GPUs
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L16-GPU.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L16-GPU.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 4.4-4.9
+ </td>
+ <td>
+ Ch. 4.4-4.9
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Mar 31
+ </td>
+ <td>
+ L17: Vectors II
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L17-RISCV-Vectors.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L17-RISCV-Vectors.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 4.1-4.3 (App. G)
+ </td>
+ <td>
+ Ch. 4.1-4.3 (App. G)
+ </td>
+ <td>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/lab4.pdf>Lab 4</a><br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/riscv-v-spec-0.10.html>RVV 0.10</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/riscv-v-spec-0.10.pdf>[PDF]</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Apr 1
+ </td>
+ <td>
+ CS252A Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=pink>
+ <a href=http://www.hpl.hp.com/techreports/Compaq-DEC/WRL-TN-36.pdf>"Combining
+ Branch Predictors"</a>, McFarling, DEC WRL Technical Note TN-36,
+ 1993<br>
+ <a href=http://ieeexplore.ieee.org/document/903263/>"Dynamic Branch Prediction with Perceptrons"</a>, Jimenez, Lin, HPCA 2001<br>
+ <a href=http://www.irisa.fr/caps/people/seznec/JILP-COTTAGE.pdf>"
+ A case for (partially) TAgged GEometric history
+ length branch prediction </a>, Seznec, Michaud, Journal of Instruction Level Parallelism
+ (JILP), 2006
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Apr 2
+ </td>
+ <td>
+ CS152 Section 9: Vectors, GPUs, and Lab 4 Overview
+ <a href="https://docs.google.com/presentation/d/1maClujQGVgDxw1Sj6L7_pafjnm0p5wU5U-tCOBHqtUk/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1iF8x-8kKgh9IaJEPbz836G_Ek5vkAck0R2fRuECbXMI/edit?usp=sharing">Worksheet 9</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec09-worksheet.pdf>PDF</a>)
+ 
+ 
+ 
+ 
+ 
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>12</td>
+ <td>
+ Mon Apr 5
+ </td>
+ <td>
+ L18: Cache Coherence
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L18-Coherence.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L18-Coherence.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 5.1-5.4
+ </td>
+ <td>
+ Ch. 5.1-5.4
+ </td>
+ <td bgcolor=pink>
+ PS 4 due
+ <br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps4-sol.pdf>PS 4 Solutions</a>
+ <br>
+ Lab 3 due
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Apr 7
+ </td>
+ <td>
+ L19: Synchronization and Memory Consistency Models
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L19-MCM.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L19-MCM.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 5.1, 5.5-5.6
+ </td>
+ <td>
+ Ch. 5.1, 5.5-5.6
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Apr 8
+ </td>
+ <td>
+ CS252A Readings Discussion<br>
+ </td>
+ <td colspan=3 bgcolor=pink>
+ <a href="http://dl.acm.org/citation.cfm?id=359336">"The CRAY-1 Computer System"</a>, Russel, CACM 1978<br>
+<a href="http://dl.acm.org/ft_gateway.cfm?id=801649">"Very Long Instruction Word Architectures and the
+ ELI-512"</a>, Fisher, ISCA 1983<br>
+<a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=2247">"A VLIW Architecture for a Trace Scheduling Compiler"</a>,
+Colwell et al., IEEE Trans. Computers, 1988
+ </td>
+ </tr>
+ 
+ <tr>
+ <td>
+ Fri Apr 9
+ </td>
+ <td>
+ CS152 Section 10: Midterm 2 Review
+ <a href="https://docs.google.com/presentation/d/1u6q4-3-jcVbiVecMIFl12McXjjdPEjXsQrehoddCeiU/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1Ere44oRkyFqogUvbUO-kjwLImM7-isghoweHDdnvhbE/edit?usp=sharing">Worksheet 10</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec10-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>13</td>
+ <td>
+ Mon Apr 12
+ </td>
+ <td>
+ L20: Synchronization Primitives
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L20-Synch.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L20-Synch.pdf>PDF</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Apr 14
+ </td>
+ <td bgcolor=yellow>
+ Midterm 2: L10-17 <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/midterm-2-sol.pdf>Solutions</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ PS 5
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps5.pdf>PDF</a>,
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps5.doc>DOC</a>)<br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/handout6.pdf>Handout 6</a><br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/handout7.pdf>Handout 7</a>
+ <br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/lab5.pdf>Lab 5</a><br>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Apr 15
+ </td>
+ <td colspan=3 bgcolor=pink>
+ CS252A Project Checkpoint
+ </td>
+ 
+ <td bgcolor=pink>
+ Project update
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Apr 16
+ </td>
+ <td>
+ CS152 Section 11: Cache Coherence
+ <a href="https://docs.google.com/presentation/d/13jklOIlyeUcjzDs691LSKizdR-CQaWdGLXqlG9661XQ/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ &nbsp;
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1yZRU5jLUUJPYa3t-SEKnx3zFGeNKK-eB8fdf2_mBgdI/edit?usp=sharing">Worksheet 11</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec11-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>14</td>
+ <td>
+ Mon Apr 19
+ </td>
+ <td>
+ L21: <b>2017 Turing Award
+ Lecture</b> <a href=https://www.acm.org/hennessy-patterson-turing-lecture>
+ New Golden Age for Computer Architecture:
+ Domain-Specific Hardware/Software Co-Design,
+ Enhanced Security, Open Instruction Sets, and Agile
+ Chip Development</a>, David Patterson and John Hennessy
+ </td>
+ <td>
+ </td>
+ <td>
+ Ch. 7
+ </td>
+ <td bgcolor=pink>
+ Lab 4 due
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Apr 21
+ </td>
+ <td>
+ L22: Virtual Machines
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L22-VirtualMachines.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L22-VirtualMachines.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 5.2-5.3
+ </td>
+ <td>
+ Ch. 5.2-5.3
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Apr 22
+ </td>
+ <td>
+ CS252A Readings Discussion
+ </td>
+ <td colspan=3 bgcolor=pink>
+<a href="http://dl.acm.org/ft_gateway.cfm?id=255132">"The Tera
+ Computer System"</a>, Alverson et al, ICS 1990<br>
+<a href=http://www.hpl.hp.com/techreports/Compaq-DEC/WRL-95-7.pdf>"Shared Memory
+ Consistency Models: A Tutorial"</a>, Adve,
+Gharachorloo, DEC WRL TR, 1995<br>
+<a href=http://www.sgidepot.co.uk/origin/isca.pdf>"The SGI Origin: a
+ ccNUMA highly scalable server"</a>, Laudon, Lenoski, ISCA 1997<br>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Apr 23
+ </td>
+ <td>
+ CS152 Section 12: Memory Consistency and Synchronization
+ <a href="https://docs.google.com/presentation/d/1mHWMEVoce30w5GVTbfuTEZ3z_cJncBi6Kt_5H0oZ6VI/edit?usp=sharing">Slides</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1jMGWlx946vK8i58sz1VsXGMoWtA8f1e1TfyzbSFg63w/edit?usp=sharing">Worksheet 12</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec12-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>15</td>
+ <td>
+ Mon Apr 26
+ </td>
+ <td>
+ L23: I/O and Warehouse-Scale Computing
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L23-IO-WSC.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L23-IO-WSC.pdf>PDF</a>
+ </td>
+ <td>
+ Ch. 6
+ </td>
+ <td>
+ Ch. 6
+ </td>
+ <td bgcolor=pink>
+ PS 5 due<br>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/assignments/sp21/sp21-ps5-sol.pdf>PS 5 Solutions</a>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed Apr 28
+ </td>
+ <td>
+ L24: Last lecture: Putting it all together
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L24-Summary.pptx>PPTX</a>
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/lectures/L24-Summary.pdf>PDF</a>
+ </td>
+ <td>
+ </td>
+ <td></td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur Apr 29
+ </td>
+ <td colspan=3 bgcolor=pink>
+ CS252A Project Checkpoint
+ </td>
+ <td bgcolor=pink>
+ Project update
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Fri Apr 30
+ </td>
+ <td>
+ CS152 Section 13: Final Review (Part 1)
+ <a href="https://docs.google.com/presentation/d/1t4Hsu-lTeMVh0p_oqTcmZOacC3ZsQ1NcE-OU3CXhqUM/edit?usp=sharing">Slides</a>
+ </td>
+ <td> </td>
+ <td> </td>
+ <td>
+ <a href="https://docs.google.com/document/d/1yEtLzouLfOXD8Ao03usQq4GKRAX31Ax_d-BT9L5vrjw/edit?usp=sharing">Worksheet 13</a>
+ (<a href=https://inst.eecs.berkeley.edu/~cs152/sp21/sections/sp21/sec13-worksheet.pdf>PDF</a>)
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=4 align=center>16</td>
+ <td>
+ Mon May 3
+ </td>
+ <td bgcolor=lightgreen>
+ No lecture - RRR Week
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=pink>
+ Lab 5 due
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Wed May 5
+ </td>
+ <td bgcolor=lightgreen>
+ No CS152 lecture - RRR Week
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Thur May 6
+ </td>
+ <td bgcolor=yellow>
+ CS 252A Final Project Presentations 
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ </tr>
+ <tr>
+ <td>
+ Friday May 7
+ </td>
+ <td bgcolor=lightgreen>
+ CS152 Section 14: Final Review
+ 
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ </td>
+ <td bgcolor=lightgreen>
+ 
+ 
+ </td>
+ </tr>
+ <tr>
+ <td rowspan=2 align=center>17</td>
+ <td>
+ Mon May 10
+ </td>
+ <td bgcolor=yellow>
+ CS 152 Final Exam: 7pm-10pm PDT (Exam Group 4)
+ <a href=https://inst.eecs.berkeley.edu/~cs152/sp21/handouts/sp21/final-sol.pdf>Solutions</a>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ 
+ </tr>
+ <tr>
+ <td>
+ Fri May 14
+ </td>
+ <td bgcolor=yellow>
+ CS 252A Final Project Papers due, 11:59PM PDT
+ </td>
+ <td>
+ </td>
+ <td>
+ </td>
+ <td>
+ Email pdf to all instructors.
+ </td>
+ </tr>
+ </table>
+ </div>
+ <div class=col2>
+ <ul id=navigation>
+ <li><a href=https://inst.eecs.berkeley.edu/~cs152/sp21/info.html>CS152 Course Info</a>
+ <li><a href=https://inst.eecs.berkeley.edu/~cs152/sp21/cs252info.html>CS252A Course Info</a>
+ <li><a href=https://inst.eecs.berkeley.edu/~cs152/sp21/resources.html>Resources</a>
+ </ul>
+ </div>
+ </div>
+ </div>
+ <div id=footer>
+ <p>This page uses
+ the <a href=http://matthewjamestaylor.com/blog/holy-grail-no-quirks-mode.htm>Holy
+ Grail Liquid-Layout: No quirks mode</a>
+ by <a href=http://matthewjamestaylor.com/>Matthew James
+ Taylor</a>.
+ </p>
+ </div>
+ 
+<grammarly-desktop-integration data-grammarly-shadow-root=true><template shadowmode=open><style class=sf-hidden>div{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}div:before{content:attr(data-content)}</style><div aria-label=grammarly-integration tabindex=-1 data-content='{"mode":"full","isActive":true,"isUserDisabled":false}'></div></template></grammarly-desktop-integration><script data-template-shadow-root>(()=>{document.currentScript.remove();processNode(document);function processNode(node){node.querySelectorAll("template[shadowmode]").forEach(element=>{let shadowRoot = element.parentElement.openOrClosedShadowRoot || element.parentElement.shadowRoot;if (!shadowRoot) {shadowRoot=element.parentElement.attachShadow({mode:element.getAttribute("shadowmode"),delegatesFocus:Boolean(element.getAttribute("delegatesfocus"))});shadowRoot.innerHTML=element.innerHTML;element.remove();processNode(shadowRoot)}})}})()</script>

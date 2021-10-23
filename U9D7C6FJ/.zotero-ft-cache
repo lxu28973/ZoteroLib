@@ -1,0 +1,122 @@
+
+Computer Science 152/252A:
+CS152 Computer Architecture and Engineering
+CS252A Graduate Computer Architecture
+Spring 2021
+Prof. Krste Asanović
+TAs: Albert Ou and Jerry Zhao
+CS152/CS252A Lectures: Monday and Wednesday, 09:00am-10:30am
+CS152 Discussion Sections: Friday 12-2pm DIS 101 / Friday 2-4pm DIS 102
+CS252A Reading Discussion: Thursday 5-6pm
+All lectures/discussion-sections/office-hours are Online
+Links to online content are posted on Piazza.
+152 Piazza , 252 Piazza
+
+Welcome to the Spring 2021 CS152 and CS252A web page. This semester the undergraduate and graduate computer architecture classes will be sharing lectures, and so the course web page has been combined.
+
+CS152 is intended to provide a foundation for students interested in performance programming, compilers, and operating systems, as well as computer architecture and engineering. Our goal is for you to better understand how software interacts with hardware, and to understand how trends in technology, applications, and economics drive continuing changes in the field. The course will cover the different forms of parallelism found in applications (instruction-level, data-level, thread-level, gate-level) and how these can be exploited with various architectural features. We will cover pipelining, superscalar, speculative and out-of-order execution, vector machines, VLIW machines, multithreading, graphics processing units, and parallel microprocessors. We will also explore the design of memory systems including caches, virtual memory, and DRAM. An important part of CS152 is series of lab assignments using real microprocessor designs implemented in the Chisel hardware description language, and running as simulators and FPGA emulators hosted in the Amazon cloud (FireSim) . These simulators will give you an in-depth look at a variety of processor architectural techniques. Our objective is that you will understand all the major concepts used in modern microprocessors by the end of the semester.
+
+CS252A is intended to provide essential background for students intending to pursue research in computer architecture or related fields, and also provides preparation for the Berkeley EECS computer architecture oral prelim examination. An important part of CS252A is reading and discussion of classic architecture papers, as well as a substantial course project.
+Course Calendar with Handouts
+Note: Tentative, schedule subject to change!
+
+Week 	Date 	Lecture 	Readings
+5th Edition 	Readings
+6th Edition 	Assignments / Handouts
+1 	Wed Jan 20 	L1: Introduction, Early Machines PPTX PDF 	Ch. 1, App. A 	Ch. 1, App. A 	
+Fri Jan 22 	CS152 No section 			
+2 	Mon Jan 25 	L2: Simple Machine Implementations, Microcoding PPTX PDF 			
+Wed Jan 27 	L3: Pipelining PPTX PDF 	App. C.1-C.3 	App. C.1-C.3 	PS 1 ( PDF , DOC )
+Lab 1 PDF
+Handout 1
+Blank microcode table
+Thur Jan 28 	CS252A No Readings Discussion 	
+Fri Jan 29 	CS152 Section 1: Microcode, Lab 1 Overview Slides 			Worksheet 1 ( PDF )
+3 	Mon Feb 1 	L4: Pipelining II PPTX PDF 	App. C.4-C.6 	App. C.4-C.6 	
+Wed Feb 3 	L5: Memory Hierarchy PPTX PDF 	App. B.1-B.2, Ch. 2.1-2.3 	App. B.1-B.2, Ch. 2.1-2.2 	 
+Thur Feb 4 	CS252A Readings Discussion 	"Design of the B5000 System" , Lonergan, King, 1961
+"Architecture of the IBM System/360" , Amdahl, Blaauw, Brooks, 1964
+Fri Feb 5 	CS152 Section 2: Pipelining review Slides 	  	  	Worksheet 2 ( PDF )
+4 	Mon Feb 8 	L6: Memory Hierarchy II PPTX PDF 	App. B.3 	App. B.3 	PS 1 due
+PS 1 solutions
+Wed Feb 10 	L7: Prefetching, Guest Lecture from Apple (Last year's slides: PPTX PDF ) 			PS 2 ( PDF , DOC )
+Handout 2
+Thur Feb 11 	CS252A Readings Discussion 	"The Case for the Reduced Instruction Set Computer" , Patterson, Ditzel, 1980
+Comments on the "The Case for the RISC" , Clark, Strecker, 1980
+"Performance from architecture: comparing a RISC and CISC with similar hardware organization" , Bhandarkar, Clark, 1991
+Fri Feb 12 	CS152 Section 3: PS 1 Review and Memory Hierarchy Slides 	  	  	Worksheet 3 ( PDF )
+5 	Mon Feb 15 	President's Day Holiday 			
+Wed Feb 17 	L8: Address Translation and Protection PPTX PDF 	App. B.4-7 	App. B.4-7 	Lab 1 due
+Lab 2
+Thur Feb 18 	CS252A Projects Office Hours 	(Email Krste for Zoom link) 	
+Fri Feb 19 	CS152 Section 4: Address Translation and Lab 2 Overview Slides 	  	  	Worksheet 4 ( PDF )
+6 	Mon Feb 22 	L9: Virtual Memory PPTX PDF 	  	  	
+Wed Feb 24 	L10: Complex pipelines, out-of-order issue, register renaming PPTX PDF 	Ch. 3.1,3.4-3.5 	Ch. 3.1,3.4-3.6 	PS 2 due
+PS 2 solutions
+CS252A project proposals due
+Thur Feb 25 	CS252A Readings Discussion 	"IBM's Single-Processor Supercomputer Efforts" , Smotherman, Spicer, CACM, 53(1), 2010
+"Implementation of Precise Interrupts in Pipelined Processors" , Smith, Pleszkun, ISCA, 1985 (IEEE Trans. Computer Journal version)
+"Parallel Operation in the Control Data 6600" , Thornton, Proceedings of the Fall Joint Computers Conference, vol 26, pp. 33-40, 1964
+Fri Feb 26 	CS152 Section 5: Midterm 1 Review Slides 	  	  	
+7 	Mon Mar 1 	Midterm 1: (L1-L9) Solutions 	  	  	
+Wed Mar 3 	L11: Out-of-order execution PPTX PDF 	Ch. 3.6, 3.8 	Ch. 3.6, 3.8 	PS 3 ( PDF , DOC )
+Thur Mar 4 	CS252A Project Proposal Discussion, Session I 	
+Fri Mar 5 	CS152 Section 6: Out-of-order Execution Slides 			Worksheet 6 ( PDF )
+8 	Mon Mar 8 	L12: Branch Prediction, Guest Lecture from Apple (Last year's slides: PPTX PDF ) 		Ch. 3.3,3.9-3.10 	Lab 2 due
+Wed Mar 10 	L13: VLIW PPTX PDF 	Ch. 3.2,3.7 	Ch. 3.2,3.7 	Lab 3
+Thur Mar 11 	CS252A Project Proposal Discussion, Session II 	
+Fri Mar 12 	CS152 Section 7: Branch Prediction, VLIW, Lab 3 Overview Slides 			Worksheet 7 ( PDF )
+9 	Mon Mar 15 	L14: Multithreading PPTX PDF 	Ch. 3.12 	Ch. 3.11 	PS 3 due
+PS 3 Solutions
+Wed Mar 17 	L15: Vectors PPTX PDF 	Ch. 4.1-4.3 (App. G) 		PS 4 ( PDF , DOC )
+Thur Mar 18 	CS252A Readings Discussion 	"An Efficient Algorithm for Exploiting Multiple Arithmetic units" , Tomasulo, IBM Journal, January 1967
+"Decoupled Access/Execute Computer Architectures" , Smith, ISCA 1982 (ACM TOCS version)
+"The MIPS R10000 Superscalar microprocessor" , Yeager, IEEE Micro 16(2), 1996
+Fri Mar 19 	CS152 Section 8: Multithreading and Vectors Slides 			Worksheet 8 ( PDF )
+10 	Mar 22-26 	Spring Break 	  	  	 
+11 	Mon Mar 29 	L16: GPUs PPTX PDF 	Ch. 4.4-4.9 	Ch. 4.4-4.9 	
+Wed Mar 31 	L17: Vectors II PPTX PDF 	Ch. 4.1-4.3 (App. G) 	Ch. 4.1-4.3 (App. G) 	Lab 4
+RVV 0.10 [PDF]
+Thur Apr 1 	CS252A Readings Discussion 	"Combining Branch Predictors" , McFarling, DEC WRL Technical Note TN-36, 1993
+"Dynamic Branch Prediction with Perceptrons" , Jimenez, Lin, HPCA 2001
+" A case for (partially) TAgged GEometric history length branch prediction , Seznec, Michaud, Journal of Instruction Level Parallelism (JILP), 2006
+Fri Apr 2 	CS152 Section 9: Vectors, GPUs, and Lab 4 Overview Slides 			Worksheet 9 ( PDF )
+12 	Mon Apr 5 	L18: Cache Coherence PPTX PDF 	Ch. 5.1-5.4 	Ch. 5.1-5.4 	PS 4 due
+PS 4 Solutions
+Lab 3 due
+Wed Apr 7 	L19: Synchronization and Memory Consistency Models PPTX PDF 	Ch. 5.1, 5.5-5.6 	Ch. 5.1, 5.5-5.6 	
+Thur Apr 8 	CS252A Readings Discussion
+	"The CRAY-1 Computer System" , Russel, CACM 1978
+"Very Long Instruction Word Architectures and the ELI-512" , Fisher, ISCA 1983
+"A VLIW Architecture for a Trace Scheduling Compiler" , Colwell et al., IEEE Trans. Computers, 1988
+Fri Apr 9 	CS152 Section 10: Midterm 2 Review Slides 			Worksheet 10 ( PDF )
+13 	Mon Apr 12 	L20: Synchronization Primitives PPTX PDF 			
+Wed Apr 14 	Midterm 2: L10-17 Solutions 			PS 5 ( PDF , DOC )
+Handout 6
+Handout 7
+Lab 5
+Thur Apr 15 	CS252A Project Checkpoint 	Project update
+Fri Apr 16 	CS152 Section 11: Cache Coherence Slides 	  		Worksheet 11 ( PDF )
+14 	Mon Apr 19 	L21: 2017 Turing Award Lecture New Golden Age for Computer Architecture: Domain-Specific Hardware/Software Co-Design, Enhanced Security, Open Instruction Sets, and Agile Chip Development , David Patterson and John Hennessy 		Ch. 7 	Lab 4 due
+Wed Apr 21 	L22: Virtual Machines PPTX PDF 	Ch. 5.2-5.3 	Ch. 5.2-5.3 	
+Thur Apr 22 	CS252A Readings Discussion 	"The Tera Computer System" , Alverson et al, ICS 1990
+"Shared Memory Consistency Models: A Tutorial" , Adve, Gharachorloo, DEC WRL TR, 1995
+"The SGI Origin: a ccNUMA highly scalable server" , Laudon, Lenoski, ISCA 1997
+Fri Apr 23 	CS152 Section 12: Memory Consistency and Synchronization Slides 			Worksheet 12 ( PDF )
+15 	Mon Apr 26 	L23: I/O and Warehouse-Scale Computing PPTX PDF 	Ch. 6 	Ch. 6 	PS 5 due
+PS 5 Solutions
+Wed Apr 28 	L24: Last lecture: Putting it all together PPTX PDF 			
+Thur Apr 29 	CS252A Project Checkpoint 	Project update
+Fri Apr 30 	CS152 Section 13: Final Review (Part 1) Slides 			Worksheet 13 ( PDF )
+16 	Mon May 3 	No lecture - RRR Week 			Lab 5 due
+Wed May 5 	No CS152 lecture - RRR Week 			
+Thur May 6 	CS 252A Final Project Presentations 			
+Friday May 7 	CS152 Section 14: Final Review 			
+17 	Mon May 10 	CS 152 Final Exam: 7pm-10pm PDT (Exam Group 4) Solutions 			
+Fri May 14 	CS 252A Final Project Papers due, 11:59PM PDT 			Email pdf to all instructors.
+
+    CS152 Course Info
+    CS252A Course Info
+    Resources 
+
+This page uses the Holy Grail Liquid-Layout: No quirks mode by Matthew James Taylor .

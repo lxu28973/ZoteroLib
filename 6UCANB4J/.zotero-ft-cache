@@ -1,0 +1,111 @@
+Loading [MathJax]/extensions/MathMenu.js
+
+Skip to Main Content
+
+System Maintenance
+
+The site is currently undergoing maintenance at this time.
+There may be intermittent impact on performance. We apologize for any inconvenience.
+
+    IEEE.org
+    IEEE Xplore
+    IEEE-SA
+    IEEE Spectrum
+    More Sites 
+
+    Create Account
+    Personal Sign In
+
+IEEE Xplore logo - Link to home
+
+    Browse
+    My Settings
+    Help
+
+Access provided by:
+Shanghai Jiaotong University
+Sign Out
+IEEE logo - Link to IEEE main site homepage
+ADVANCED SEARCH
+Journals & Magazines > IEEE Transactions on Computers > Volume: 37 Issue: 5
+Implementing precise interrupts in pipelined processors
+Publisher: IEEE
+Cite This
+PDF
+J.E. Smith ; A.R. Pleszkun
+All Authors
+173
+Paper
+Citations
+163
+Patent
+Citations
+3316
+Full
+Text Views
+
+    Alerts
+
+Abstract
+Authors
+References
+Citations
+Keywords
+Metrics
+Abstract:
+Five solutions to the precise interrupt problem in pipelined processors are described and evaluated. An interrupt is precise if the saved process state corresponds to a sequential model of program execution in which one instruction completes before the next begins. In a pipelined processor, precise interrupts are difficult to implement because an instruction may be initiated before its predecessors have completed. The first solution forces instructions to complete and modify the process state in architectural order. The other four solutions allow instructions to complete in any order, but additional hardware is used, so that a precise state can be restored when an interrupt occurs. All the methods are discussed in the context of a parallel pipeline structure. Simulation results for the Cray-1S scalar architecture are used to show that the first solution results in a performance degradation of at least 16%. The remaining four solutions offer better performance, and three of them result in as little as a 3% performance loss. Several extensions, including vector architectures, virtual memory, and linear pipeline structures, are briefly discussed.< >
+Published in: IEEE Transactions on Computers ( Volume: 37 , Issue: 5 , May 1988 )
+Page(s): 562 - 573
+Date of Publication: May 1988
+ISSN Information:
+INSPEC Accession Number: 3161338
+DOI: 10.1109/12.4607
+Publisher: IEEE
+Authors
+References
+Citations
+Keywords
+Metrics
+   Back to Results   
+More Like This
+Simulation and performance evaluation of parallel architecture based on i860 nodes: SapePar-i860
+
+Proceedings of TENCON'94 - 1994 IEEE Region 10's 9th Annual International Conference on: 'Frontiers of Computer Technology'
+
+Published: 1994
+Design and performance evaluation of a parallel architecture for the Boltzmann machine
+
+Proceedings of Twentieth Euromicro Conference. System Architecture and Integration
+
+Published: 1994
+Show More
+References
+References is not available for this document.
+IEEE Personal Account
+
+    Change username/password 
+
+Purchase Details
+
+    Payment Options
+    View Purchased Documents 
+
+Profile Information
+
+    Communications Preferences
+    Profession and Education
+    Technical interests 
+
+Need Help?
+
+    US & Canada: +1 800 678 4333
+    Worldwide: +1 732 981 0060
+    Contact & Support 
+
+Follow
+
+About IEEE Xplore | Contact Us | Help | Accessibility | Terms of Use | Nondiscrimination Policy | IEEE Ethics Reporting | Sitemap | Privacy & Opting Out of Cookies
+
+A not-for-profit organization, IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.
+
+© Copyright 2021 IEEE - All rights reserved. Use of this web site signifies your agreement to the terms and conditions.

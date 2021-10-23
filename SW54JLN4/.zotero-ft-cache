@@ -1,0 +1,353 @@
+CY
+
+SaritaV. Adve Rice University Kourosh Gharachorloo Digital Equipment Corporation
+The memory consistency model of a system affects performance, programmability, and portability. This article describes several models in an easy to understand way.
+Computer
+
+he shared memory programming model has several advantages over the message passing model. In particular, it simplifiesdata partitioning and dynamic load distribution. Shared memory systems are therefore gaining wide acceptance for both technical and commercial computing. To write correct and efficient shared memory programs, programmers need a precise notion of shared memory semantics. For example, in the program in Figure 1(a fragment from a program in the Splash application suite), processor P1 repeatedly updates a data field in a new task record and then inserts the record into a task queue. When no tasks are left, P 1 updates a pointer, Head,to point to the first record in the task queue. Meanwhile,the other processors wait for Head to have a non-null value, dequeue the task pointed to by Head in a critical section, and read the data in the dequeued task. To ensure correct execution, a programmer expects that the data value read should be the same as that written by P1. However, in many commercialshared memory systems,the processors may observe an older value, causing unexpected behavior. The memoryconsistency model of a shared memory multiprocessor formally specifies how the memory system will appear to the programmer. Essentially, a memory consistency model restricts the values that a read can return. Intuitively, a read should return the value of the “last”write to the same memory location. In uniprocessors, “last”is preciselydefined by the sequential order specified by the program, called the program order. This is not the case in multiprocessors. For example, in Figure 1the write and read of Data are not related by program order because they reside on two different processors. The uniprocessor model, however, can be extended to apply to multiprocessors in a natural way. The resulting model is called sequential consistency. Informally, sequential consistency requires that all memory operations appear to execute one at a time and that all operations of a single processor appear to execute in the order described by that processor’s program. For Figure 1,this model ensures that the reads of the data field will return the new values written by processorP1. Sequenual consistency provides a simple, intuitive programming model. However, it disallows many uniprocessor hardware and compiler optimizations. For this reason,many relaxed consistency models havebeen proposed,severalof which are supported by commercial architectures. The memory consistency model is an interface between the programmer and the system, so it influences not only how parallel programs are written but virtually every aspect of parallel hardware and software design. A memory consistency model specification is required at every interface between the programmer and the system, including the interfaces at the machine-code and high-level language levels. In particular, the high-level language specification affects high-level language programmers, compiler and other software writers who convert high-level
+0018-9162/96/$5,00 0 1996 IEEE
+
+Initially all pointers = null, all integers = 0.
+
+P1
+
+P2,P3,..., Pn
+
+while (thereare more tasks) while (MyTask== null){
+
+Task = CetFromFreeListO;
+Task -+ Data = ...;
+
+Begin critical Section if (Head != null) {
+
+insert Task in task queue
+
+MyTask = Head;
+
+1
+
+Head = Head -+ Next;
+
+Head = head of task queue; }
+
+End Critical Section
+
+I ... = MyTask -+ Data;
+
+Figure 1. Illustrationof the need for a memory consistency model.
+
+code into machine code, and the designers of hardware that executes the code. At each level, the memory consistency model affects both programmability andperformance. Furthermore, due to a lack of consensus on a single model, portability can be affected when moving software across systems supporting different models.
+Unfortunately,the vast literature that describes consistency models uses nonuniform and complexterminology to describe the large variety of models. This makes it difficultto understand the often subtle but important differences among models and leads to severalmisconceptions, some of which are listed in the “Mythsabout memory consistency models” sidebar.
+In this article, we aim to describe memory consistency models in a way that most computer professionals would understand. This is important if the performance-enhancing features being incorporated by system designers are to be correctly and widely used by programmers. Our focusis consistencymodels proposed forhardware-based shared memory systems.Most of these models emphasize the system optimizations they support, and we retain this system-centricemphasisin this article.We alsodescribean alternative, programmer-centric view of relaxed consistency models that describes them in terms of program behavior, not system optimizations. A more formal treatment is covered in our other work.’
+
+UNIPROCESSOR MEMORY CONSISTENCY
+Most high-leveluniprocessor languages present simple sequential-memory semantics, which allowthe programmer to assume that all memory operations will occur one at a time in program order. Fortunately, this illusion of sequentialitycan be supported efficientlybysimplyensuring that two operations are executed in program order if they are to the same location or if one controls the execution of the other. The compiler or the hardware can freely reorder other operations, enabling several optimizations. Overall,the sequential-memory semantics of a uniprocessor provide a simple and intuitive model and yet allow a wide range of efficient system designs.
+UNDERSTANDING SEQUENTIAL CONSISTENCY
+The most commonly assumed memory consistency model forsharedmemorymultiprocessorsissequentialconsistency,which gives programmers a simpleviewof the sys-
+
+tem. Amultiprocessorsystem is sequentiallyconsistent “if the result of any execution is the sarne as if the operations of allthe processorswere executedinsomesequentialorder, and the operations of each individual processor appear in this sequencein the order specifiedby its program.”4
+There are tworequirements for sequential consistency:
+maintaining program order arnong operations from a single processor, and maintaining a single sequential order among all operations.
+
+December 1996
+
+The second requirement makes a memory operation appear to execute atomically (instantaneously) with respect to other memory operations. A sequentially consistent system can be thought of as consisting of a single globalmemory connected to all the processorsby a central switch, At any time step, the switch connects memory to an arbitrary processor, which may then issue a memory operation. Each processor issues memory operations in program order, and the switch provides the global serialization among all memory operations.
+Figure 2a illustrates the first requirement for program order.The figure depictsDekker’s algorithmforcriticalsections. It involves two flag variables initialized to 0. When processor P1 attempts to enter the critical section, it updates Flag1to 1,and checksthe value of Flag2. Thevalue 0 for Flag2 indicates that processor P2 has not yet tried to enter the critical section, so it is safe for P l to enter. The algorithm assumes that if Pl’s read returns 0, then Pl’s write occurred before P2’swrite and read. P2 willread the flag and return 1,which will prohibit it from also entering the criticalsection. Sequential consistencyensures this by maintaining program order.
+Figure 2b illustrates the atomicity requirement. In this
+case, three processors share variables A and B,which are
+initialized to 0. Suppose P2 returns 1when it reads Aand then writes to B, and suppose P3 returns 1when it reads B. Atomicity allows us to assume that Pl’swrite is seen by the entire systemat the same time. SinceP3 seesP2’s write to B after P2 sees Pl’s write to A, it followsthat P3 is guaranteed to see Pl’s write and return 1when it reads A.
+IMPLEMENTING SEQUENTIAL CONSISTENCY
+In this section we explain how to practically realize sequential consistencyin a multiprocessorsystem.Wewill see that unlike uniprocessors,preserving onlyper-processor data and control dependencies is insufficient.We first focus on how sequential consistency interacts with common hardware optimizations and then briefly describe compileroptimizations. To separate the issuesof program order and atomicity, we begin with implementations for architectures without caches and then discuss the effects of caching shared data.
+
+Architectures without caches The key issue in supporting sequential consistency in
+systemswithout caches is program order. To illustrate the interactions that arise in such systems, we will use three typical hardware optimizations, shown in Figure 3. The notations tl, t2, and so on in the figure indicate the order in which the correspondingmemory operations executeat memory.
+WRITE BUFFERS WITH READ BYPASSING. The optimization depicted in Figure 3a shows the importance of maintaining program order between a write and a followingread, even if there is no data or control dependence between them. In this bus-based system, assume that a simple processor issues operations one at a time, in program order. Now add the optimization of a write buffer. Aprocessor can insert awrite into the buffer and proceed without waiting for the write to complete. Subsequent reads of the processor can bypass the buffered writes (to different addresses) for faster completion.
+Write buffers can violate sequential consistency. For the code in Figure 3a, a sequentially consistent system must not allow both processors’reads of flagsto return 0. However, this can happen in the system in Figure 3a: Each processor can buffer its write and allow the subsequent read to bypass it. Therefore, both reads may be serviced by memory before either write, allowingboth reads to return 0.
+OVERLAPPINGWRITES. The optimization depicted in Figure 3b shows the importance of maintaining program order between two writes. Again, we consider operations with no data or control dependencies. This system has a general (nonbus) network and multiple memory modules, which can exploit more parallelism than the system in Figure 3a. Now multiplewrites of a processormaybe simultaneously serviced by different memory modules.
+This optimizationcan alsoviolatesequentialconsistency. In the code fragment in Figure 3b, assume that D a t a and H e a d reside in different memory modules. Because the write to H e a d may be injected into the network before the write to D a t a has reached its memory module, the two writes could completeout of program order.Therefore,P2 might see the newvalue of H e a d and yet get the old value of D a t a , a violation of sequential consistency.
+To maintain program order among writes, an acknowledgment can be returned to the processor that issued the write once the write has reached its target memory module. The processor could be constrained from injecting another write until it receives an acknowledgment of its previous write.
+This write acknowledgment technique can also maintain program order from a write to a subsequent read in systemswith general networks.
+
+Figure 2. Examples for sequential consistency.
+
+NONBLOCKINREGADS. The optimization in Figure 3c illustrates the importance of maintaining program order between a read and a following operation. While most early RISC processors blocked on a read until it returned a value, recent processors proceed past reads, using techniques such as lockup-free caches and dynamic scheduling. In Figure 3c, two overlapped reads violate
+
+Computer
+
+sequential consistency in a manner similar to overlapped writes. A read overlapped with a following write causes similar problems, but this kind of overlap is not common.
+
+PROGRAM ORDER REQUIREMENT. The above discussionshowsthat in straightforward hardware implementations,a processor must ensure that its previous memory operation is complete before proceeding with its next memory operation in program order.We callthis requirementtheprogram order requirement.
+
+Architectures with caches Caching, or replication, of shared data
+can lead to scenarios similar to those described for systems without caches. Systems that use caching must therefore take similar precautions to maintain the illusion of program order. Most notably, even if a read hits in its processor’s cache, reading the cached value without waiting for the completion of previous operations can violate sequential consistency. The replication of shared data introduces three additional issues.
+
+CACHE COHERENCE PROTOCOLS. The
+
+presence of multiple cache copiesrequires
+
+a mechanism, often called a cache coher-
+
+ence protocol, to propagate a new value to
+
+all copies of the modified location. A new
+
+value is propagated by either invazidating
+
+(or eliminating) or updating each copy.
+
+The literature includes several defini-
+
+tions of cache coherence (which is some-
+
+times called cache consistency). The
+
+strongest definitions are virtually synony-
+
+mous with sequential consistency. Other
+
+definitions impose extremely relaxed
+
+orderings.Onecommondefinition requires
+
+two conditions for cache coherence:
+
+Figure 3. Optimizations that may violate sequential consistency;
+... tl, t2, indicate the order in which the corresponding memory
+
+A write must eventually be made visi- operations execute at memory
+
+ble to all processors.
+
+Writes to the same location must
+
+appear to be seen in the same order by all processor^.^ DETECTINWGRITE COMPLETION.When there are no
+
+caches, a write acknowledgment may be generated when
+
+These conditions are clearly not sufficient to satisfy the write reaches itstarget memory.However, an acknowl-
+
+sequential consistency. This is because sequential consis- edgment at this time is too early for a systemwith caches.
+
+tency requiresthat writes to all locations (notjust the same Supposewrite-throughcachesweireaddedto eachproces-
+
+location) be seen in the same order by all processors, and sor in Figure 3b. Assume P2 initiallyhas D a t a inits cache.
+
+also explicitlyrequires that a single processor’soperations Now supposeP1proceedsto write tci Head afterthewrite to
+
+appear to execute in program order.
+
+D a t a reachesitstargetmemorybut beforeitsvaluehasbeen
+
+We do not use the term cache coherence to define a con- propagated to P2. It is possible that P2 could read the new
+
+sistency model. We view a cache coherence protocol as valueofHead andstillreturntheoldvalueofData fromits
+
+simplya mechanism to propagate a newly written value. cache,a violation of sequentialconsistency.
+
+The memory consistency model is the policy that places P1 must wait for P2’s copy of Data to be updated or
+
+the bounds on when the value can be propagated to a invalidated before itwrites to Head. Thus, a write to a line
+
+given processor.
+
+replicated in other caches typicallyrequires an acknowl-
+
+December 1996
+
+,
+PZ Ak2, C= 1
+
+*---
+initially A = B = C = 0
+P3
+while (B != 1) I;}
+khile (ek 1) t}
+~
+register1 = A
+
+P4
+while (B != 1) I,)
+while (C != 1) {#} register2 = A
+
+Figure 4. Example f o r serialization of writes.
+
+edgment of invalidate or update messages as well. Furthermore, the acknowledgments must be collected either at the memory or at the processor that issues the write. In either case, the writing processor must be notified when all acknowledgments are received. Only then can the processor consider the write to be complete.
+A common optimization is to have each processor acknowledge aninvalidateorupdate immediatelyon receipt and potentiallybeforeits cachecopyis affected.This design cansatisfysequentialconsistencyif it supportscertain ordering constraintsin processingall incoming message^.^
+MAINTAININWGRITE ATOMICITY. Propagatingchanges to multiple cache copies is inherently a nonatomic operation. Therefore, specialcare must be taken to preserve the illusion of write atomicity.
+In this sectionwe describe two conditions that together ensure the appearance of atomicity.We will refer to these conditions as the write atomicity requirement.
+The firstconditionrequireswrites to the same locationto be serialized. That is, all processors should see writes to the samelocationinthe same order.Figure4 illustratesthe need for this condition: Assume an update protocol and that all processors in Figure4 executememory operations one at a time and in program order. Sequential consistencyis violated if the updates of the writes of Aby P l and P2 reach P3 and P4 in a different order. If this happens, P3 and P4 will return differentvalues when they read A and the writes of Aappear nonatomic.This can occur in systemswith a general (nonbus) network that do not guarantee the delivery order of messages that traverse different paths. Requiring serializationof writes to the same location solves this problem. One way to achieve serialization is to ensure that all updates or invalidatesfor a locationoriginatefrom a single point (suchas the directory) and the networkpreservesthe ordering of messages between a given source and destination. An alternative is to delay updates or invalidatesuntil those issued for a previous write to the same line are acknowledged.
+The second condition prohibits a read from returning a newlywritten value until all cached copieshave acknowledged receipt of the invalidates or updates generated by the write (that is, until the write becomes visible to all processors). Assume, for example, that all variables in Figure 2b are initially cached by all processors. Furthermore, assume a system with all the precautions for sequential consistencyexcept for the above condition. It is still possible to violate sequential consistencywith a general network with an update protocol if
+
+3. P3 returns the new value of B and the old value of A from its cache.
+P2 and P3 will thus appear to see the write of A at different times, Violating atomicity.A similarsituation can arise in an invalidate scheme. This violation occursbecause P2 returns the value of Pl’s write before the update for the write reaches P3. Prohibiting a read from returning a newlywrittenvalue until all cached copieshave acknowledged the updates for the write avoids this.
+It is straightforwardto ensure the secondconditionwith invalidate protocols. Update protocols are more challenging because updates directly supply new values to other processors. One solution for update protocols is to employa two-phase update scheme: The firstphase sends updates and receives acknowledgments. In this phase, no processor is allowed to read the updated location. In the second phase, a confirmation message is sent to the updated processor caches to confirm the receipt of all acknowledgments.A processor can use the updated value from its cache once it receivesthis confirmation.
+Compilers Compilers that reorder shared memory operations can
+causesequentialconsistencyviolationssimilarto hardware. For all the program fragments discussed so far, compilergenerated reordering of shared memory operations will lead to sequential consistencyviolations similar to hardware-generated reorderings. Therefore, in the absence of more sophisticated analysis, the compiler must preserve programorder amongsharedmemoryoperations.Thisprohibits any uniprocessor compiler optimization that might reorder memory operations, including simple optimizations-code motion, register allocation, and eliminating common subexpressions-and more sophisticated optimizations-loop blocking and software pipelining.
+Besidesreordering, compileroptimizations such as register allocation can also cause the elimination of shared memory operations. This can also lead to sequential consistencyviolations in subtle ways. In Figure 3b, for example, if the compiler register allocatesHead onP2 (bydoing a single read of Head into a register and then reading the value from the register), the loop on P2 may never terminate if the single read returns the old value of Head. Sequential consistency requires this loop to terminate in every execution.
+Optimizationslike register allocation are key to performance, so most compilers for sequentially consistent systems performthem. It is left to the programmer to explicitly disable them when necessary, using mechanisms such as the volatiledeclaration.Butitisdifficultto determinewhen disablingis necessary-it requires reasoning that is similar to the reasoning for relaxed consistencymodels.
+The above discussion applies to compilers for explicitly parallel code; compilers that parallelize sequential code naturally have enough information about the generated parallel program to determine when an optimization is safe to apply.
+
+1. P2 reads the new value of A,
+
+Optimizations for sequential consistency
+
+2. P2’s update of B reaches P3 before the update of A, Severaltechniqueshavebeen proposedto enable the use
+
+and
+
+of some hardware and compileroptimizationswithout vio-
+
+Computer
+
+lating sequential consistency. Here, we include the ones that have the potentialto substantiallyboost performance.
+HARDWARETECHNIQUES. Two hardware techniques
+forcache-coherentsystems are supportedby severalrecent microprocessors (the Hewlett-Packard PA-8000,the Intel P6, and the MIPS R10000)PThe first technique automaticallyprefetchesownershipfor anywrite operationthat is delayed due to the program order requirement (for example, by issuing prefetch-exclusive requests for writes delayed in the writebuffer),thus partially overlappingthe service of the delayed writes with previous operations. The second speculativelyservicesread operationsthat are delayeddue to the programorderrequirement. Sequential consistencyis guaranteed by simplyrolling back and reissuingthe read and subsequentoperations,if the read line gets invalidated or updated before the read could have been issued in a more straightforward implementation. Because dynamically scheduled processors already includemuch of the necessqrollbackmachinery (to deal with branch mispredictions), they are particularlywellsuited to this technique.
+Arecent studyhas shownthat thesetwo techniques dramatically improve the performance of sequential consistency? However, in many cases a significant performance gap remains between sequential consistency and the relaxed consistency model of release consistency.
+Other latency hiding techniques, such as nonbinding software prefetching or hardware support for multiple contexts, have also been shown to enhance the performance of sequentially consistent hardware. However, these techniques are also beneficial when used in conjunction with relaxed memory consistency.
+COMPILERTECHNIQUES. A compiler algorithm to detect when memory operations can be reordered without violatingsequential consistency has been proposed? Such an analysis canbe used to implement both hardware and compiler optimizations. This algorithm has exponential complexity.More recently, a new algorithm with polynomial complexity has been proposed?
+However, both algorithms require global dependence analysis to determine whether two operations from differentprocessors can conflict. This analysisis difficultand often leads to conservative estimates that can decrease the algorithms’effectiveness.It remains to be seenif these algorithmscan approachthe performanceof relaxed consistency models.
+RELAXED MEMORY MODELS Relaxed memory consistency models typically empha-
+sizethe systemoptimizationstheyenable and arebased on widely varying specification methods and levels of formalism. We retain the system-centric emphasis, but describe the models using a simpler, more uniform terminology. A more formal and unified system-centric framework, alongwith formaldescriptionsof these models, has been published e l ~ e w h e r e . ~ , ~
+Model types We use two key characteristics to categorize relaxed
+memory consistency models:
+
+How they relaxtheprogram orderrequirement.Models differ on the basis of how they relaxthe order from a write to a following read, between two writes, and from a read to a followingread orwrite. These relaxations apply only to operation pairs with different addresses and are similar to ihe optimizations for sequential consistency described for architectures without caches. How they relax the write attomicity requirement. Some models allow a read to return the value of anotherprocessor’swritebeforethe writeismadevisible to all other processors. This relaxation applies only to cache-basedsystems.
+We also consider a relaxation related to both program order and write atomicity, where a processor is allowed to read the value of its own previous write before the write is made visible to other processors and, in a cache-based system, before the write is serialized. A common optimization that exploits this relaxation is forwarding the value of a write in a write buffer to a following read from the same processor.
+The relaxed models discussed here also typically provide mechanismsfor overridingtheir default relaxations. For example, explicitfence instructions may be used to override program order relaxations. We call these mechanisms safety nets. We discuss only the more straightforward safety nets here.
+Table 1(onthe next page) liststhe relaxationsand safetynets forthe modelswe discuss here, and Table 2 lists example commercial systems that allow such relaxations. For simplicity,we do not attempt to describethe models’semanticswith respect to issues such as instruction fetches, I/O operations, or multiple granularit)..operations (byte versusword operations,for example),eventhough somemodels define such semantics.
+Throughoutthis section,we assumethat the following constraints are satisfied:
+We assumethat all models requireboth that a write eventuallybe made visible to all processors and that writes to the same location be serialized. If shared data is not cached, these requirements are trivial; otherwise they are met by a hardware cache coherence protocol. We assumethat all models enforceuniprocessor data and controldependencies. We assumethat models that relax the programorder from reads to following write operations also maintain a subtleformof multiprocessordata and control dependence?,zThisconstraintis inherentlyupheld by all processor designs we know of and can be easily maintained by the compiler.
+Relaxing write to read program order These models allow a read to be reordered with respect
+to previous writes from the same processor. Therefore, programs such as the one in Figure 3a may fail to provide sequentiallyconsistentresults.
+
+December 1996
+
+As Table 1shows, the three models in this group-IBM 370, total store ordering (TSO), and processor consistency (PC)-differ in when they allow a read to return the value of a write. Figure 5 illustrates these differences.
+As a safety net, the IBM 370 provides special serializationinstructions that can be used to enforceprogram order between a write and a following read. Some serialization instructions, such as compare&swap, are memory operations used for synchronization. Others are nonmemory instructions, such as a branch. The IBM 370 does not need a safety net for write atomicity because it does not relax atomicity.
+In contrast, the TSO and PC models do not provide explicit safety nets. Nevertheless, programmers can use read-modify-write operations to provide the illusion that program order is maintained from a write to a read or that writes are atomic?s3Fortunately, most programs do not depend on write-to-read program order or write atomicity for correctness.
+Relaxingprogram order as these models do can substantially improve performance at the hardware levelby effectivelyhidingthe latencyofwrite operations.lOAtthe compiler level, however, this relaxation alone is not beneficial. Most compiler optimizations require the extra flexibility of reordering any two operations (read or write) with respect to one another.
+
+Relaxing write to read and write to write program order
+These models allow writes to different locations from the same processor to be pipelined or overlapped, and so they may reach memory or other cached copies out of program order. Therefore, these models can violate sequential consistencyfor the programs in Figures 3a and 3b. The partial store ordering model (PSO) is the only model we describe here.
+With respect to atomicity requirements, PSO is identical to TSO. However, PSO adds a safety net, the STBAR instruction, which imposes program order between two writes. As with the previous three models, the optimizations allowed by PSO are not sufficientlyflexibleto be useful to a compiler.
+Relaxing all program orders The final set of models relax program order between all
+operationsto differentlocations, allowinga read orwrite to be reordered withrespectto a followingread or write.Thus, they mayviolate sequentialconsistencyforallthe examples shownin Figure3.Thekey additional optimizationrelative to the previousmodels is that memory operationsfollowing a read operation may be overlapped or reordered with respect to the read. This flexibilityallowshardware to hide the latency of reads with either statically (in-order) or
+
+Computer
+
+dynamically (out-of-order) scheduled pr0cessors.3~~ We discuss six models in this class: the weak ordering
+(WO) model, twoflavorsof the releaseconsistencymodel (RCsc and RCpc), and three models proposed for commercial architectures-the Digital Alpha, Sparc relaxed memory order (RMO), and IBM PowerPC. Except for Alpha, these models alsoallowthe reorderingof two reads to the same location.
+Regarding atomicity, all models in this group allow a processor to read its own write early. RCpc and PowerPC are the only models whose straightforwardimplementations allow a read to return the value of another processor's write early. This can also happen in more complex implementationsof WO, RCsc, Alpha, and RMO. Fromthe programmer'sperspective, however, all implementations of WO, Alpha, and RMO must preserve the illusion of write atomicity (while extremely aggressive implementations of RCsc may violate it). For WO, we assumethat if a read and a followingwrite are relatedby data or control dependence, then the write is delayed until both the read and the write read by the read are complete.
+These six models fall into two main categories,on the basis of the type of safetynet they provide. TheWO, RCsc, and RCpc models distinguish memory operations based on their type and provide stricter ordering constraintsfor some operations. The Alpha, RMO, and PowerPC models provide explicit instructions to impose program orders between various memory operations.
+
+not typicallyaffectprogram correctness.SinceWO ensures that writes appear to be atomic to the programmer, no safetynet is required for write atomicity.
+RELEASECONSISTENCY. The release consistency models further distinguishmemory operations.Operations are first distinguished as ordinary or special, categories that loosely correspond to the distinction between data and synchronizationinWO. Specialopeirationsare further distinguished as sync or nsync. Syncoperations are synchronizationoperations;nsyncs are eithLer asynchronousdata operations or special operations not used for synchronization. Finally, syncoperationsare further distinguished as acquire or release operations.An acquire is a read operation performed to gain access to shared locations (for example, a lockoperation or spinningfor a flagto be set). A release is a write operation performed to grant permission to access shared locations (for example, an unlock operation or setting of a flag).
+There are two flavors of release consistency, RCsc and RCpc. RCsc maintainssequentialconsistency among specialoperations,while RCpc maintainsprocessorconsistency amongsuchoperations.RCscmaintains the program order from an acquire to any operationthlat followsit, from any operation to a release, and between special operations. RCpcis similar,exceptthat thewriteto-read program order amongspecialoperationsis not maintained.
+
+WEAK ORDERING. The weak ordering model classifies memory operations into two categories: data operations and synchronization operations. To enforce program order between two operations, the programmer must identify at least one of them as a synchronization operation. Memory operations between two synchronization operationsmay stillbe reordered and overlapped. This model is based on the intuition that reordering memoryoperationsto data regions between synchronization operations does
+
+InitiallyA = Flagl = Flag2 = 0
+
+PI
+
+P2
+
+Flagl = 1
+
+Flag2 = 1
+
+A=l
+
+A=2
+
+register1 = A
+
+register3 = A
+
+register2 = Flag2 register4 = Flagl
+
+Result: registerl = 1, register3 = 2, register2 = register4 = 0
+(a)
+
+PI A=l
+
+InitiallyA = B = 0
+
+P2
+
+P3
+
+if (A == 1) B=1
+if (6 = regii Result: B = 1, registerl = 0
+
+(b)
+
+Figure 5. Differences between 370, TSO, and PC. The result foir the program in part (a) is possible with TSO and PC because both modelsallow the reads of the flags to occur beforethe writes of the flags on each processor.The result is not possible with IBM 370 because the read of A on each processor is not issued until the write of A on that processor is complete. Consequently, l:heread of the flag on each processor is not issued until the write of the flag on that processor is
+done. The program in part (b) is the same as in Figure2b. The! result shown is possible with PC because it allows P2 to returnthe value of PI'S write beforethe
+write is visible to P3. The result is not possible with IBM 370 or TSO.
+
+December 1996
+
+Thus, for the RC models, program order between a pair of operationscan be enforcedby distinguishingor labeling appropriateoperationsbased onthe precedinginformation.
+For RCpc, imposing program order from a write to a read or making awrite appear atomicrequires using readmodify-write operations as in the PC model?z5Complex implementations of RCsc may also make writes appear nonatomic; one way to enforce atomicity is to label sufficient operations as special.2~T~he RCsc model is accompanied by a higher level abstraction that relieves the programmer from having to use the lower level specification to reason about many programs?
+ALPHA,M O , AND POWERPCT. he Alpha, RMO, and PowerPC models all provide explicitfence instructions, as their safety nets.
+The Alpha model provides two fence instructions: memory barrier (MB) and write memory barrier (WMB). Memory barrier instructions maintain program order between any memory operations that come before them and any memory operations that come after them. Write memory barrier instructions provide this guarantee only among write operations. The Alpha model does not require a safety net for write atomicity.
+The RMO model provides more flavors of fence instructions. Effectively, a programmer can customize a memory barrier instruction (MEMBAR) to specify any combination of four possible pairs of orderings-between allwrites followed by all reads, all writes followed by all writes, all reads followed by all reads, and all reads followed by all writes. This model also does not require a safety net for write atomicity.
+ThePowerPC model providesa singlefenceinstruction, Sync. Sync behaves like the Alpha memory barrier, with one exceptionthat can createsubtlecorrectnessproblems: Even if a Sync is placed between two reads to the same location, the second read may return the value of an older write than the first read. In other words, the reads appear to occur out of program order. Unlike Alpha and RMO, PowerPC does not preserve write atomicity and may require the use of read-modify-writeoperations to make a write appear atomic?
+Compiler optimizations The last set of models described are flexible enough to
+allow common compiler optimizations on shared memory operations. With WO, RCsc, and RCpc, the compiler can reorder memoryoperationsbetween two consecutive synchronization or special operations. With the Alpha, RMO, and PowerPC models, the compiler can reorder operationsbetween fence instructions.Most programs use these operations or instructions infrequently, so the compiler can safely optimize large regions of code.
+PROGRAMMER-CENTRICMODELS
+Relaxed memory models enable a wide range of optimizations that have been shown to substantiallyimprove performance.3J10J1However, they are harder for programmers to use. Furthermore, the wide range of models supported by different systems requires programmers to deal with various semantics that differ in subtle ways and complicateporting.
+
+We need a higher level abstraction that provides programmers a simpler view, yet allows system designers to exploit the various optimizations.
+Relaxed models are complexto program because their system-centricspecifications directly expose the programmer to the reordering and atomicityoptimizations,requiring the programmer to considersuch optimizationswhen reasoning about program correctness. Even though relaxed models do provide safety nets, the programmer must still identify the ordering constraints necessary for correctness.
+Instead of exposing optimizations directly to the programmer, a programmer-centricspecification requires the programmer to provide certaininformationabout the program.This information isthen used bythe systemto determinewhether a certainoptimization canbe applied without affectingthe Correctnessof program execution.To provide a formal programmer-centricspecification,we must first define when a program is consideredto be executed correctly by the system. An obvious choice for correctness is sequentialconsistency, because it is a natural extension of the uniprocessor notion of correctness and the most commonly assumed multiprocessorcorrectness model. Once we have defined a correctness notion, we must precisely define the information required from the programmer.
+So our programmer-centricapproach describes a memory model in terms of program-level information that a programmer must provide, and then exploits this information to perform optimizations without violating sequential consistency.
+We have described various programmer-centric approaches elsewhere: The data-race-free-0 approach allows WO-like optimizations,12 the properly-labeled approachis a simplerway to write programs for RCsc,Sand other approaches exploit more aggressive optimization^."^ We have also developed a unified framework to explore the designspace of programmer-centricmodels and optimizati0ns.l
+Sample programmer-centricframework To illustrate the programmer-centric approach, we
+describeprogram-levelinformation that can enable WOlike optimizations.Recall that weak ordering is based on the intuition that memory accesses can be classified as either data or synchronization, and that data operations can be executed more aggressivelythan synchronization operations. However, the informalnature of this classification makes it ambiguous when applied over a wide range of programs. A key goal of the programmer-centric approach is to formally definethe operations that should be distinguished as synchronization.
+An operationis a synchronizationoperationif itforms a race with another operation in any sequentially consistent
+execution.Allother operationsare data operations.Given
+a sequentiallyconsistentexecution,two operations form a race with each other if they access the same location, if at least one is a write, and if there are no other operations between them. For example, in every sequentially consistent execution of the program in Figure 3b, the write and read of Data are separated by intervening operations on Head. 1nthiscasetheformersetaredataoperations.Incontrast, operationson Head arenot always separatedby other
+
+Computer
+
+operations, so they are synchronization operations. Toprovide this information, the programmer must rea-
+son only about sequentially consistent executions of the program and does not have to deal with any reordering optimizations. With this information, the optimizations enabled bythe weak ordering model can be safelyapplied. In fact, this information enables more aggressive optimizations than those exploited by weak ordering,5J2and can also be used to efficiently port programs to all the other relaxed models.’,3
+Figure 6 depicts the decision process for distinguishing memory operations. Correctness is not guaranteed if the programmer incorrectly distinguishes a race operation as data. However, an operation may be conservatively distinguished as a synchronization operation if the programmer is not sure whether the operation is involved in a race. This don’t-know option is important because it allows a programmer to trivially ensure correctness by conservatively identifymg all operations as synchronization. Of course, this forgoes any performance gains but potentially allows a faster path to an initial working program. The don’t-know option also lets the programmer incrementally tune performance: The programmer can provide accurate information for memory operations in performance-critical areas of the program and conservative information for other areas.
+Distinguishingmemory operations To provide the system with information on memory
+operations, we need a mechanism to distinguish operations at the language level. We also need a mechanism to pass this information to the hardware level.
+LANGUAGELEVEL. Here we consider languages that have explicit parallel constructs. The mechanism for conveying information about memory operations depends on how the language supports parallelism. Language support forparallelism may range from high-levelparallelism constructs (such as d o a l l loops) to low-leveluse of memory operations for achieving synchronization.
+Ahigh-leveld o a l l loop implies that the parallel iterations of the loop do not accessthe same location if at least one of these accesses is a write. Thus, correct use of d o a l l implicitlyconveys that accesses across iterations are not involved in a race. Alanguage may require that programmers use only low-levelsynchronizationroutines, such as those provided in a library, to eliminate races between other operations in the program. Again, correct use of such routines implies that only accesses within the synchronization library are involved in races. Of course, the compiler or library writers must ensure that appropriate information (synchronization or data) for operations used to implement the synchronization routines i s appropriately conveyed to the lower levels of the system (for example, the hardware). At the lowest level, the programmer may be allowed to directly use any memory operation for synchronization purposes. For example, any location may be used as a flag variable. In this case, the programmer must explicitly convey information about operation
+
+Figure 6. Deciding how to distinguish a memory operation.
+types. One way to do this is to associate the information with staticinstructions at the program level. For example, special constructs may statically identify regionsof codeto be synchronization.Another option is to associate the synchronization attribute with a shared variable or address through, for example,type declarations. Or the language may provide a default mode that assumes, for example, that an operation is a data operation unless specified otherwise. Even though data operations are more common, making synchronization the default may make it simpler to bring up an initial working program and may decrease errors by requiring data operations (which are aggressivelyreordered) to be identified explicitly. We are not aware of any languages that provide appropriate mechanisms for conveying information at this lowest level. Mechanisms such as C’svolatile type declaration lack the appropriate semantics3
+HARDWALREVEEL. The informationconveyedat the language level must ultimately be provided to the underlying hardware. Oftenthe compiler is responsiblefor doing this.
+Information about memory operations at this levelmay also be associated with either specific address ranges or static memory instructions. The former maybe supported by distinguishing different virtual or physical pages. The latter maybe supported through unused opcode bits (that is, multiple flavors of memory instructions) or unused address bits (that is, address shadlowing) or by treating certain instructions (such as compare&swap) as synchronization by default.
+Most commercial systems do noit provide these mechanisms. Instead, this information must be transformed to explicitfenceinstructions supported at the hardware level. For example, to provide the semantics of synchronization operations in weak ordering on h,ardware that supports Alpha-likememory barriers, the COmpiler can precede and follow every synchronization operation with a memory barrier. Due to the widespread adoption of fence instructions, several languages also let programmers explicitly invoke them at the program level.
+THEREIS STRONG EVIDENCE that relaxed memory consistency models provide better performance than sequential consistencymodelsPz~loTJ1he increase in processor speeds
+
+December 1996
+
+Aelative to memory and communication speeds will only ncrease the potential benefit from these models. In addi:ion to gains in hardware performance, relaxed memory ionsistency models also play a key role in enabling comd e r optimizations. For these reasons, many commercial srchitectures, such as the Digital Alpha, Sun Sparc, and [BMPowerPC, support relaxed consistency.
+Unfortunately, relaxed memory consistency models increase programming complexity. Much of this complexityarisesbecause many of the specificationspresented in the literature expose the programmer to the low-level performance optimizations enabled by a model. Our previous work has addressed this issue by defining models using a higher level abstractionthat provides the illusion of sequential consistency as long as the programmer provides correct program-level information about memory operations. Meanwhile, language standardization efforts such as High Performance Fortran have led to high-level memory models that are different from sequential consistency. In short, the question of which is the best memory consistency model is far from resolved. This question can be better resolved with a more active collaboration between language and hardware designers. I
+Acknowledgments Most of this work was performed as part of our disser-
+tations at the University of Wisconsin, Madison, and Stanford University. We thank our respective advisors, Mark Hill and h o o p Gupta and John Hennessy, for their direction.We especiallythank Mark Hillfor suggestingthe need for this article and for encouraging us to write it.
+We thank Sandhya Dwarkadas, h o o p Gupta, John Hennessy, Mark Hill, Yuan Yu, and Willy Zwaenepoel for their valuable comments. We also thank Tony Brewer, Andreas Nowatzyk, Steve Scott, and Wolf-Dietrig Weber for information on products developed by HewlettPackard, Sun Microsystems, Cray Research, and HaL Computer Systems.Finally, we thank the anonymous referees for their valuable comments and guest editor Per Stenstrom for his support. At Wisconsin, Sarita Adve was partly supported by an IBM graduate fellowship. At Rice, this workwas partly supported bythe US National Science Foundationunder grants CCR-9502500and CCR-9410457 and by the Texas Advanced Technology Program under grant 003604016.At Stanford,Kourosh Gharachorloowas supported by DARPA contract N00039-91-C-0138 and partly supported by a fellowship from Texas Instruments.
+References 1. S.V. Adve, Designing Memory ConsistencyModelsfor Shared
+MemoryMultiprocessors,PhD thesis, Tech. Report 1198, CS Department, Univ. of Wisconsin, Madison, 1993. 2. K. Gharachorloo et al., “SpecifymgSystemRequirementsfor Memory ConsistencyModels,”Tech. Report CSL-TR-93-594, StanfordUniv., 1993. 3. K. Gharachorloo,MemoryConsistencyModelsfor SharedMemoryMultiprocessors, PhD thesis, Tech. Report CSL-TR-95-685, StanfordUniv., 1995. 4. L. Lamport, “Howto Make a Multiprocessor Computer That CorrectlyExecutesMultiprocessPrograms,”IEEE Trans. Computers, Sept. 1979,pp. 690-691.
+
+5. K. Gharachorloo et al., “Memory Consistency and Event Ordering in ScalableShared MemoryMultiprocessors,”Proc. 17thInt’l Symp. ComputerArchitecture, IEEE CS Press, Los Alamitos, Calif., 1990, pp. 15-26.
+6. K. Gharachorloo,A. Gupta, and J.L. Hennessy, “Two Techniques to Enhance the Performance of Memory Consistency Models,”Proc. Int‘l Con$ Parallel Processing, The Pennsylvania State Univ. Press, UniversityPark, Penn., 1991, pp. 355364.
+7. V.S. Pai et al., “An Evaluation of Memory Consistency Models for Shared Memory Systems with ILP Processors,” Proc. 7thInt’lConf. onArchitectura1SupportforProgramming Languages and Operating Systems, ACM Press, New York, 1996, pp. 12-23
+8. D. Shasha and M. Snir, “EfficientCorrect Execution of Parallel Programs That ShareMemory,”ACMTrans.Programming Languagesand Systems,Apr. 1988,pp. 282-312.
+9. A. Krishnamurthy and K. Yelick, “OptimizingParallel SPMD Programs,” in WorkhoponLanguagesand CompilersforParalle1 Computing, Ithaca, NewYork, 1994.
+10. K. Gharachorloo, A. Gupta, and J.L. Hennessy,“Performance Evaluation of Memory ConsistencyModelsfor Sharedmemory Multiprocessors,”Proc. Fourth Int’l Conf. Architectural Supportfor Programming Languagesand Operating Systems, ACM Press, New York, 1991, pp. 245-257.
+11. R.N. Zucker and J.-L. Baer, “A Performance Study of Memory ConsistencyModels,”Proc.19thAnn. Int’l Symp. on ComputerArchitecture, ACM Press, New York, 1992,pp. 2-12.
+12. S.V. Adve and M.D. Hill, “Weak Ordering-A New Definition,”Proc. 17thSymp.ComputerArchitecture,IEEE CS Press, Los Alamitos, Calif., 1990,pp. 2-14.
+Sarita V.Adve is an assistant professor in the Electrical and Computer Engineering Department at Rice University. Her research interests are parallel computer hardware and software, including the interaction between instruction-level and thread-level parallelism, architectural techniques to aid and exploitparallelizing compilers, and simulation methodologyforparallel architectures, Adve received aBTech inelectrical engineeringfrom the Indian Institute of Technology, Bombay, and anMS and a PhD in computer sciencefrom the University of Wisconsin,Madison.
+KouroshGharachorlooisa researchscientist in the Western Research Laboratory at Digital Equipment Corporation. His research interests are parallel computer architecture and software, includinghardware and software distributed shared memory systems and the study of commercial applications. Before joining Digital, he was a key contributor in the Stanford Dash and Flash projects. Gharachorloo received a BS in electrical engineering, a BA in economics, an MS in electrical engineering, and aPhDinelectrical engineering and computer science, allfrom Stanford University.
+ContactAdve at Dept. of Electrical and Computer Engineering, MS 366 Rice University,Houston, TX 77005; sarita@ rice.edu. Contact Gharachorloo at WesternResearch Laboratory, Digital Equipment Corp., 250 UniversityAve., Palo Alto, CA 94301.1616; kourosh@pa.dec.com.
+
+Computer
+

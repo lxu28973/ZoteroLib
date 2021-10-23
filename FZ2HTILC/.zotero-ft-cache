@@ -1,0 +1,109 @@
+IEEE websites place cookies on your device to give you the best user experience. By using our websites, you agree to the placement of these cookies. To learn more, read our Privacy Policy.
+Accept & Close
+Loading [MathJax]/extensions/MathZoom.js
+
+Skip to Main Content
+
+System Maintenance
+
+The site is currently undergoing maintenance at this time.
+There may be intermittent impact on performance. We apologize for any inconvenience.
+
+    IEEE.org
+    IEEE Xplore
+    IEEE-SA
+    IEEE Spectrum
+    More Sites 
+
+    Create Account
+    Personal Sign In
+
+IEEE Xplore logo - Link to home
+
+    Browse
+    My Settings
+    Help
+
+Access provided by:
+Shanghai Jiaotong University
+Sign Out
+IEEE logo - Link to IEEE main site homepage
+ADVANCED SEARCH
+Journals & Magazines > IEEE Micro > Volume: 16 Issue: 2
+The Mips R10000 superscalar microprocessor
+Publisher: IEEE
+Cite This
+PDF
+K.C. Yeager
+All Authors
+283
+Paper
+Citations
+30
+Patent
+Citations
+3702
+Full
+Text Views
+
+    Alerts
+
+Abstract
+Authors
+Citations
+Keywords
+Metrics
+Abstract:
+The Mips R10000 is a dynamic, superscalar microprocessor that implements the 64-bit Mips 4 instruction set architecture. It fetches and decodes four instructions per cycle and dynamically issues them to five fully-pipelined, low-latency execution units. Instructions can be fetched and executed speculatively beyond branches. Instructions graduate in order upon completion. Although execution is out of order, the processor still provides sequential memory consistency and precise exception handling. The R10000 is designed for high performance, even in large, real-world applications with poor memory locality. With speculative execution, it calculates memory addresses and initiates cache refills early. Its hierarchical, nonblocking memory system helps hide memory latency with two levels of set-associative, write-back caches.
+Published in: IEEE Micro ( Volume: 16 , Issue: 2 , Apr 1996 )
+Page(s): 28 - 41
+Date of Publication: Apr 1996
+ISSN Information:
+INSPEC Accession Number: 5250560
+DOI: 10.1109/40.491460
+Publisher: IEEE
+Authors
+Citations
+Keywords
+Metrics
+   Back to Results   
+More Like This
+Cooling a Microprocessor Chip
+
+Proceedings of the IEEE
+
+Published: 2006
+Characterization of microprocessor chip stress distributions during component packaging and thermal cycling
+
+2010 Proceedings 60th Electronic Components and Technology Conference (ECTC)
+
+Published: 2010
+Show More
+IEEE Personal Account
+
+    Change username/password 
+
+Purchase Details
+
+    Payment Options
+    View Purchased Documents 
+
+Profile Information
+
+    Communications Preferences
+    Profession and Education
+    Technical interests 
+
+Need Help?
+
+    US & Canada: +1 800 678 4333
+    Worldwide: +1 732 981 0060
+    Contact & Support 
+
+Follow
+
+About IEEE Xplore | Contact Us | Help | Accessibility | Terms of Use | Nondiscrimination Policy | IEEE Ethics Reporting | Sitemap | Privacy & Opting Out of Cookies
+
+A not-for-profit organization, IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.
+
+© Copyright 2021 IEEE - All rights reserved. Use of this web site signifies your agreement to the terms and conditions.
